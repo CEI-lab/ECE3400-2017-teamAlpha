@@ -1,7 +1,8 @@
 # Lab 3: Digital Logic
 ## Team Alpha, ECE 3400, Fall 2017
 
-//Goal:// Output data from an Arduino through an FPGA to a screen driver. 
+_Goal:_ 
+Output data from an Arduino through an FPGA to a screen driver. 
 
 We worked in two sub-teams. Team 1 sent data from the Arduino to the FPGA and converted this to something that made sense on the screen - we decided to display a 2-by-2 array of bits. Team 2 displayed the array on the screen and continuously updated it. 
 First we had to agree on an interface, in our case this is the 2-by-2 array, defined as:
@@ -15,13 +16,13 @@ wire [1:0] grid_coord_y; //Index y into the array
 By the end of the lab, we merged the two codes into one, such that we could flip a bit on the Arduino side, and see the change on the screen. In the future we will extend this to work with a full maze layout. 
 
 
-//Lab, team 1://
+_Lab, team 1:_
 
 It is very important to remember that the FPGA only takes 3.3V inputs, the Arduino gives out 5V, do not connect pins directly!!
 
 
 
-//Lab, team 2://
+_Lab, team 2:_
 
 We were given a VGA module to drive the screen. Reading through this module, we understand that it works as the illustrated sketch. Our job will be to modify the main module. 
 
