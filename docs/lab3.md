@@ -1,106 +1,138 @@
-# FPGA Video Controller
-## ECE 3400 Fall ’17
+# Lab 4 Digital Logic
+## Team Alpha, ECE 3400, Fall 2017
 
-### Objective
-In this lab, you will create a video controller with an FPGA, controlled by an Arduino Uno. To do this, you will need to familiarize yourself with the DE0-Nano FPGA development board, develop a system for transferring image information from the Arduino to the FPGA, and learn how to interact with the video memory and VGA driver. From a hardware perspective, you will also need to construct a basic Digital-to-Analog Converter (DAC).
-By the end of the lab, you should be able to draw a representation of the maze on the monitor such that this representation is on the Arduino, is then sent to the FGPA, and finally to the monitor.
+//Goal:// Output data from an Arduino through an FPGA to a screen driver. 
 
-Materials
-- 1 DE0-Nano Development Board
-- 1 Arduino Uno
-- Various resistors
-- 1 empty DAC circuit board
-- Solder and Soldering Iron
-- 1 VGA cable
-- 1 VGA connector
-- 1 VGA monitor
-- Female header
+We worked in two sub-teams. Team 1 sent data from the Arduino to the FPGA and converted this to something that made sense on the screen - we decided to display a 2-by-2 array of bits. Team 2 displayed the array on the screen and continuously updated it. 
+First we had to agree on an interface, in our case this is the 2-by-2 array, defined as:
 
-### Pre-lab Assignment
-This lab will be the most intensive of all four labs. As such, it is very important that you have prepared before you begin the lab. Your team will need to schedule a 30-minute appointment here:
-https://docs.google.com/spreadsheets/d/1L_cFAYbKFIjP5osEzR8n7xxf76_8KTAVB3BpGt4dwI0/edit#gid=89687802.
+```verilog
+reg grid_array [1:0][1:0]; //[rows][columns]
+wire [1:0] grid_coord_x; //Index x into the array
+wire [1:0] grid_coord_y; //Index y into the array
+```
 
-This is a debrief, to take place between 16-19 September, so that the staff can make sure that you’re on track. Not all members of your team are required to attend; however, it is required that the team leaders are present, and it is suggested that team members intending to work heavily on the video controller attend as well.
+By the end of the lab, we merged the two codes into one, such that we could flip a bit on the Arduino side, and see the change on the screen. In the future we will extend this to work with a full maze layout. 
 
-Read the Pre-Lab document on Blackboard carefully…
 
-Look at the provided sample codes for the VGA driver and video memory. The VGA driver generates the necessary VGA color and synchronization signals. It also outputs the x- and y-coordinates of the next pixel that is needed. It only has one input - which is the color that corresponds to the last pixel location given. A diagram is shown in the procedure section. During the preparation for your debrief with the staff (to take place between 16-19 September), you will need to decide how you will encode the pixels and their colors. Two important considerations are timing and space: you need to be able to access pixel colors quickly, edit them quickly, and have enough space in FPGA memory to hold all of the pixel values.
+//Lab, team 1://
 
-The example code addresses these concerns by condensing the number of locations needed to be remembered from thousands of pixels to hundreds of solid blocks. Another solution would be to use the Nano’s on-board memory (not the logic elements) to allow saving individual pixel values. It is up to you whether you use the sample solution or a design of your own.
+It is very important to remember that the FPGA only takes 3.3V inputs, the Arduino gives out 5V, do not connect pins directly!!
 
-The VGA driver outputs color and synchronization signals. For color, it outputs 3 bits for red, 3 bits for green, and 2 bits for blue. However, the VGA cable connecting to the monitor only has one wire for red, one wire for green, and one wire for blue. These are analog cables (they take values from 0 to 1 V). Given that the monitor has an internal 50 Ω load, design a DAC that converts the given color bits (with a 3.3V digital output from the FPGA) to the desired three color 1V analog signals. You will be soldering these resistors onto a PCB – the layout for that is in the Procedure section below.
 
-You will use Altera’s Quartus II software to program the FPGA. While there will have been a review of Verilog in class, it is highly recommended that you review how to program with Verilog.
 
-Bruce Land setup a nice webpage with VGA images and instructions:
+//Lab, team 2://
 
-https://hackaday.io/project/5033-de0-nano-fpga-to-vga-output
+We were given a VGA module to drive the screen. Reading through this module, we understand that it works as the illustrated sketch. Our job will be to modify the main module. 
 
-### Notebook Documentation
-Throughout this lab and ALL labs, remember to have each team member document their steps and experiences in their own lab notebook. Notebooks should contain personal notes, schematics, diagrams, and documentation of results and challenges of this lab. These notebooks will be looked over at the end of your lab session to ensure two things: that you were present in the lab (remember: labs are required), and that you are taking good notes. Keep in mind that you will use your notebooks until the end of the final project. The notebooks will keep track of your progress with the labs and project, how the labs tie into the final project. There is a document on BlackBoard with more details about that.
+<img src="/docs/images/FPGA_screen_driver.png" alt="FPGA_screen_driver_module" width="600" height="232">
 
-### Procedure
-1. USB driver for FPGA
-In case the USB drivers are not installed on your PC in the lab, follow these instructions if you cannot load a program onto the FPGA:
-1) Plug in the FPGA to the computer with USB
-2) Go to Device Manger
-3) Under "Other Devices", Right click "USB Blaster"
-4) Click "Update Driver Software"
-5) Click "Browse my computer for driver software"
-6) The location of the USB driver on the lab computers is: C:\ altera_lite\15.1\ quartus\\ drivers
-7) Install the drivers when it pops up. Once it's done installing, you should be able to program the FPGA.
+First, we changed the color of the screen to green, blue, and red.
 
-2. Design and code a memory system for pixels
-With the given VGA driver code create a system that stores pixel information and relays the relevant pixel information to the VGA driver when it is requested. The first step is to agree upon a pixel color format and determine how you can store all the color information on the FPGA (memory is limited). There are many ways you can do this and some even allow the use of higher resolution color. For ideas, refer to the example code on Blackboard.
-After coding the pixel memory system, integrate it with the display driver that you already have. The driver requests colors by screen location and it is up to you to interpret what that means to your storage system. The driver expects an 8 bit color format (3 bits for red, 3 bits for green, and 2 bits for blue), so you may need to convert to this color format before passing the color to the driver.
+```verilog
+assign PIXEL_COLOR = 8'b000_000_00 \\black
+assign PIXEL_COLOR = 8'b111_000_00 \\red
+assign PIXEL_COLOR = 8'b000_111_00 \\green
+assign PIXEL_COLOR = 8'b000_000_11 \\blue
+```
+(Fyi, underscores in verilog are ignored by the compiler, they're just there for readability!)
 
-![Fig. 1](images/lab3_fig1.png)
-The clouds in the above diagram are where you input your own code and design ideas.
+Second, we drew a black square on a red screen, using an if-statement in a combinatorial block: 
 
-3. Create a communication method between the Arduino and the FPGA
+```verilog
+always @ (*) begin 
+  if(PIXEL_COORD_X < 10'd64 && PIXEL_COORD_Y < 10'd64) begin
+    PIXEL_COLOR = 8'b000_000_00;
+  end
+  else begin
+    PIXEL_COLOR = 8'b111_000_00;
+  end
+end
+```
+The signal inside the bracket is called a sensitivity list. An asterix means that the block will run when any of the signals inside change. We are comparing our 10-bit pixel coordinates to constants. These constants are defined as 10-bits (10), decimal value (d), 64.
 
-Create a system to pass information from the microcontroller to the FPGA using the digital ports on both of these devices. You can send the information serially or through a parallel bus, but be sure to consider timing and other concerns when determining this. Be aware that the DE0-Nano operates at 3.3 Volts, but the Arduino Uno outputs 5 volts on its digital pins. Therefore, you will need to have a voltage divider for each wire connected from the Arduino to the FPGA. You will also need a common ground. Confirm that the TA’s that your choice of resistors is adequate before soldering the components.
+Third, we want to draw a two by two grid. 
+```verilog
+reg grid_array [1:0][1:0]; //2-by-2 array of [rows][columns]
+```
 
-The final step is to create a protocol for the information that is being sent, and to interpret the information on the FPGA’s side of communication. The FPGA should be able to use the data to modify the image on the display screen. (Examples of different functions would include: clearing the screen, drawing a wall in a location, drawing a free space in a location, etc.)
+Next, we want to have a 2-by-2 grid and update the value in each square depending on the 2-by-2 array. 
+To do this we first make a module that converts pixels to 2-by-2 blocks of 64 pixels each: 
 
-4. Solder a DAC to convert the FPGA’s output to 3 RGB channels
+```verilog
+`define GRID_TOP_LEFT_X 0   //Potential offset from the corner
+`define GRID_TOP_LEFT_Y 0   //Potential offset from the corner
+`define BLOCK_SIZE      64  //Each block will be 64 by 64 pixels
 
-Use your results from the pre-lab to create a functional DAC and solder it to the PCBs given. This DAC will connect to the RGB channels of the VGA cable, as well as ground and horizontal/vertical sync signals. The PCB schematic is shown in several images below.
+module VGACOORD_2_GRIDCOORD(
+  vga_pixel_x,  
+  vga_pixel_y,
+  grid_coord_x,
+  grid_coord_y
+  );  //Specify all inputs and outputs to the module
 
-You will need to solder wires, appropriate resistors, and a VGA connector onto the PCB. Confirm that the TA’s that your choice of resistors is adequate before soldering the components. The necessary parts will be with the soldering stations (except the resistors, which will be in the bins). Remember to ALWAYS use safety goggles and wash your hands after soldering.
+  input  [9:0] vga_pixel_x;   //Specify the direction and number of bits in the signal
+  input  [9:0] vga_pixel_y;
+  output reg [1:0] grid_coord_x;
+  output reg [1:0] grid_coord_y;
+  
+  always @ (*) begin          //begin combinatorial logic to determine which block the pixel is in
+    if (vga_pixel_x < `BLOCK_SIZE && vga_pixel_y < `BLOCK_SIZE) begin               //Upper left block
+      grid_coord_x = 0;
+      grid_coord_y = 0;
+    end
+    else if (vga_pixel_x < `BLOCK_SIZE && vga_pixel_y < `BLOCK_SIZE * 2) begin      //Lower left block
+      grid_coord_x = 0;
+      grid_coord_y = 1;
+    end
+    else if (vga_pixel_x < `BLOCK_SIZE * 2 && vga_pixel_y < `BLOCK_SIZE) begin      //Uper right block
+      grid_coord_x = 1;
+      grid_coord_y = 0;
+    end
+    else if (vga_pixel_x < `BLOCK_SIZE * 2 && vga_pixel_y < `BLOCK_SIZE * 2) begin  //Lower right block
+      grid_coord_x = 1;
+      grid_coord_y = 1;
+    end
+    else begin                                                                      //Not in the grid
+      grid_coord_x = 2;                                               
+      grid_coord_y = 2; 
+    end
+  end
 
-Note: There are many already-soldered voltage dividers left from last year’s laboratory. Many are in good condition and should work fine. You are welcome to use those if you want, or create your own.
+endmodule
+```
 
-![Fig. 2](images/lab3_fig2.png)
+Now we change the main module to instantiate our module and always do:
 
-### Wrap-Up
-Keep all circuitry and materials relevant to the video controller in your box. Do not keep USB A/B cables or computer monitors in your box. All other components can be placed back into their appropriate bins.
+```verilog
 
-You should have documented this lab in your notebook; your documentation should include personal notes, challenges, successes, and applicable diagrams.
+VGACOORD_2_GRIDCOORD vgacoord_2_gridcoord(    //Instantiate module
+  .vga_pixel_x(PIXEL_COORD_X),                //The text after the periods refers to internal wires in the module
+  .vga_pixel_y(PIXEL_COORD_Y),                //The text in the parantheses refers to wires external to the module
+  .grid_coord_x(grid_coord_x),
+  .grid_coord_y(grid_coord_y)
+  );
 
-Use the GitHub program on the lab computer to save your code. GitHub is a tool that allows you to share and save code and other documents. Using one teammate’s personal account, add the code from this lab as a repository and share it with other team members. If you need to access this code at a later time, you can “clone” it back onto the computer. If you need any assistance with using GitHub, refer to the tutorial on Blackboard or ask a TA.
+//Always run:
+if (grid_coord_x < 2 && grid_coord_y < 2) begin                                   //If within grid
+  if (grid_array[grid_coord_y][grid_coord_x] == 1) begin                          //If array reads 1, color square red
+    PIXEL_COLOR <= 8'b111_000_00;
+  end
+  else begin
+    PIXEL_COLOR <= 8'b111_111_11;
+  end
+  else begin
+    PIXEL_COLOR <= 9'b000_000_00;
+  end
+end
+```
 
-### Report
-See the Lab and Notebook Write-Up document on Blackboard for guidelines on how to write the report.
 
-The report for this lab should include the following information in addition to what is specified in the Write-Up document:
+_Concluding Remarks:_
 
-1. Your design and well-commented code for the memory system for the pixels, with schematics, code and discussion.
+Finally, we have to think about how this will work for our final system. We will have to display the full maze on the screen, including treasures, walls, unknown and travelled areas, and the robot itself. We also need to be able to display when the robot has finished traversing the maze.  Here are the questions we discussed:
 
-2. How you implemented the communication method between the Arduino and the FPGA, with schematics, well-commented code and discussion.
+* How will we display the maze?
+* Will it still make sense to use parallel communication between the Arduino and the FPGA when you include all the states?
+* Standardized coordinate system. How do we display the coordinates on the screen? How does the robot think about the maze as it travels? The standard way to interpret images and screens is to place the origin in the upmost left corner, making the positive x direction towards the right, and the positive y-direction downwards. 
 
-3. At least a page with any issues encountered, a summary of results, a short explanation on how the lab fits with the final project, and any suggested improvements for the lab.
-
-4. Address what is requested in the Lab 3 Accompanying Handout.
-
-5. Submit your robot’s cost breakdown table as it stands when you submit this lab’s report (separate Excel table appended to your Report, with columns showing Item Description, Quantity, Unit Price, Total Price).
-
-The above information should be placed in the applicable sections of Introduction, Diagrams/Design/Analysis, Experimental Results, and Conclusion that are listed in the Write-Up document. Items 1 and 2 would probably be in both Analysis and Results, and item 3 would probably go best in Conclusion.
-
-If you have a lot of code, feel free to put it in an Appendix and refer to sections of it throughout your report where necessary. It would be helpful to have line numbers for easy reference. Make sure your code is well commented and formatted.
-
-If you have any questions on what to write in your report or how to format it, please contact the staff.
-
-In addition to submitting a hard copy of the report during the week of 12 October, you also need to submit this complete report on Blackboard.
-
-The grading of these reports will not be based on the effectiveness of your design but entirely upon your documentation and written understanding of the lab. This will include a TA review of your lab notebook that contains notes, design sketches, and results/challenges.
