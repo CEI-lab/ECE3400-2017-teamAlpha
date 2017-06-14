@@ -70,7 +70,7 @@ Buzzer and IR?
 
 # Lab 3 Wireless Communication
 
-
+[Lab 3 FPGA](https://github.com/KirstinHP/ECE3400-2017-teamAlpha//docs/lab3.md)
 
 
 
