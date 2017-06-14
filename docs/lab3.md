@@ -1,4 +1,4 @@
-# Lab 4 Digital Logic
+# Lab 3: Digital Logic
 ## Team Alpha, ECE 3400, Fall 2017
 
 //Goal:// Output data from an Arduino through an FPGA to a screen driver. 
