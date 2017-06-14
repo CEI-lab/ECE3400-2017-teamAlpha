@@ -80,7 +80,14 @@ Fyi: Consider how to efficiently implement this so that it doesn't take up too m
 
 //Lab, team 2://
 
-We were given a library to drive the screen: VGA_DRIVER_driver(.reset, .clock, .pixel_color_in, .
-
+We were given a library to drive the screen: VGA_DRIVER_driver(.reset, .clock, .pixel_color_in, ).
+First, we changed the color of the screen to green, blue, and red.
+```verilog
+assign PIXEL_COLOR = 8'b000_000_00 \\black
+assign PIXEL_COLOR = 8'b111_000_00 \\red
+assign PIXEL_COLOR = 8'b000_111_00 \\green
+assign PIXEL_COLOR = 8'b000_000_11 \\blue
+```
+Fyi, underscores in verilog are ignored by the compiler, they're just there for readability!
 
 
