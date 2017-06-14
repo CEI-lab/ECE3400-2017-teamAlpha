@@ -21,9 +21,11 @@ Code-snippet:
 
 Third, we modified it to work with an external LED, by adding these lines of code:
 
+```C
 pinMode(9, OUTPUT); //Setup pin 9 as output
 digitalWrite(ledPin, HIGH); //Turn on LED
 digitalWrite(ledPin, LOW); //Turn off LED
+```
 
 <video>
 
