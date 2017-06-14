@@ -26,17 +26,22 @@ digitalWrite(ledPin, LOW); //Turn off LED
 Fourth, we communicated over serial interface:
 
 ```C
-Serial.begin(9600); //Setup serial interface to communicate with 9600 baudrate
-Serial.println('Alpha team!'); //Send text 
+Serial.begin(9600);           //Setup serial interface to communicate with 9600 baudrate
+Serial.print("Alpha team!");  //Send text 
+Serial.println("");           //Carriage return
 ```
 
-<Screenshot>
+![ArduinoComm](images/ArduinoComm.png)
 
 Fifth, we read an analog input from a potentiometer connected to A0, and used it to control the brightness of the LED:
 
+```C
 potmeter = analogRead(A0); //Reads an ADC conversion from pin A0 using default settings for the ADC (10 bit conversion).
 Serial.println(potmeter);  //Send the potmeter value to the screen
 analogWrite(ledPin, potmeter>>2); //The analog write function only takes 8bits, so we have to divide our value by 4
+```
+
+VIDEO!
 
 Sixth, we controlled a continuous rotation servo-motor using the library servo.h:
 
