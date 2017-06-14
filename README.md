@@ -80,14 +80,46 @@ Fyi: Consider how to efficiently implement this so that it doesn't take up too m
 
 //Lab, team 2://
 
-We were given a library to drive the screen: VGA_DRIVER_driver(.reset, .clock, .pixel_color_in, ).
+We were given a VGA module to drive the screen, a layout of this module looks like this:
+
+The module runs at 25MHz, sending out the value of the pixel to the screen, then sending back the next x,y coordinate for you to change. 
+
+
 First, we changed the color of the screen to green, blue, and red.
+
 ```verilog
 assign PIXEL_COLOR = 8'b000_000_00 \\black
 assign PIXEL_COLOR = 8'b111_000_00 \\red
 assign PIXEL_COLOR = 8'b000_111_00 \\green
 assign PIXEL_COLOR = 8'b000_000_11 \\blue
 ```
-Fyi, underscores in verilog are ignored by the compiler, they're just there for readability!
+(Fyi, underscores in verilog are ignored by the compiler, they're just there for readability!)
+
+Second, we drew a black square on a red screen, using an if statement in a combinatorial block. The signal inside the bracket is called a sensitivity list. A star means that the block will run when any of the signals inside change. 
+
+```verilog
+always @ (*) begin 
+  if(PIXEL_COORD_X < 10'd64 && PIXEL_COORD_Y < 10'd64) begin
+    PIXEL_COLOR = 8'b000_000_00;
+  end
+  else begin
+    PIXEL_COLOR = 8'b111_000_00;
+  end
+end
+```
+
+Third, we want to draw a two by two grid. 
+```verilog
+reg grid_array [1:0][1:0]; //2-by-2 array of [rows][columns]
+```
+
+Specify the coordinate system. How does the robot think about it? The screen draws from the upper left corner, counting x positive toards the right, and y postive downwards. 
+
+
+
+
+
+
+
 
 
