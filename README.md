@@ -96,7 +96,7 @@ assign PIXEL_COLOR = 8'b000_000_11 \\blue
 ```
 (Fyi, underscores in verilog are ignored by the compiler, they're just there for readability!)
 
-Second, we drew a black square on a red screen, using an if statement in a combinatorial block. The signal inside the bracket is called a sensitivity list. A star means that the block will run when any of the signals inside change. 
+Second, we drew a black square on a red screen, using an if-statement in a combinatorial block: 
 
 ```verilog
 always @ (*) begin 
@@ -108,11 +108,58 @@ always @ (*) begin
   end
 end
 ```
+The signal inside the bracket is called a sensitivity list. An asterix means that the block will run when any of the signals inside change. We are comparing our 10-bit pixel coordinates to constants. These constants are defined as 10-bits (10), decimal value (d), 64.
 
 Third, we want to draw a two by two grid. 
 ```verilog
 reg grid_array [1:0][1:0]; //2-by-2 array of [rows][columns]
 ```
+
+Next, we want to have a 2-by-2 grid and update the value in each square depending on the 2-by-2 array. 
+To do this we first make a module that converts pixels to 2-by-2 blocks of 64 pixels each: 
+
+```verilog
+`define GRID_TOP_LEFT_X 0
+`define GRID_TOP_LEFT_Y 0
+`define BLOCK_SIZE      64
+
+module VGACOORD_2_GRIDCOORD(
+  vga_pixel_x,
+  vga_pixel_y,
+  grid_coord_x,
+  grid_coord_y
+  );
+
+  input  [9:0] vga_pixel_x;
+  input  [9:0] vga_pixel_y;
+  output reg [1:0] grid_coord_x;
+  output reg [1:0] grid_coord_y;
+  always @ (*) begin
+    if (vga_pixel_x < `BLOCK_SIZE && vga_pixel_y < `BLOCK_SIZE) begin
+      grid_coord_x = 0;
+      grid_coord_y = 0;
+    end
+    else if (vga_pixel_x < `BLOCK_SIZE && vga_pixel_y < `BLOCK_SIZE * 2) begin
+      grid_coord_x = 0;
+      grid_coord_y = 1;
+    end
+    else if (vga_pixel_x < `BLOCK_SIZE * 2 && vga_pixel_y < `BLOCK_SIZE) begin
+      grid_coord_x = 1;
+      grid_coord_y = 0;
+    end
+    else if (vga_pixel_x < `BLOCK_SIZE * 2 && vga_pixel_y < `BLOCK_SIZE * 2) begin
+      grid_coord_x = 1;
+      grid_coord_y = 1;
+    end
+    else begin
+      grid_coord_x = 2;
+      grid_coord_y = 2; // not in the grid
+    end
+  end
+
+endmodule
+```
+
 
 Specify the coordinate system. How does the robot think about it? The screen draws from the upper left corner, counting x positive toards the right, and y postive downwards. 
 
