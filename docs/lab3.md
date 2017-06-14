@@ -100,7 +100,7 @@ module VGACOORD_2_GRIDCOORD(
       grid_coord_y = 2; 
     end
   end
-
+\
 endmodule
 ```
 
