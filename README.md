@@ -84,7 +84,7 @@ Fyi: Consider how to efficiently implement this so that it doesn't take up too m
 
 We were given a VGA module to drive the screen. Reading through this module, we understand that it works as the illustrated sketch. Our job will be to modify the main module. 
 
-<img src="/docs/images/FPGA_screen_driver.png" alt="FPGA_screen_driver_module" width="800" height="309">
+<img src="/docs/images/FPGA_screen_driver.png" alt="FPGA_screen_driver_module" width="600" height="232">
 
 First, we changed the color of the screen to green, blue, and red.
 
