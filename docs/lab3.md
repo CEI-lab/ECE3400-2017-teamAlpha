@@ -127,7 +127,7 @@ if (grid_coord_x < 2 && grid_coord_y < 2) begin                                 
   end
 end
 ```
-
+<img src="/docs/images/FPGA_screen.png" alt="FPGA_control_of_screen" width="400" height="225"> 
 
 _Concluding Remarks:_
 
