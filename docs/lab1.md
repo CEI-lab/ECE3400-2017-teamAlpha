@@ -1,23 +1,17 @@
 # Lab 1: Microcontrollers
 ## ECE 3400, Fall 2017, Team Alpha
 
-## Lab 1: Microprocessors
-
 _Goal:_
 
-The goal of this lab is to get acquainted with the Arduino Uno and to build and control a basic robot. 
+The goal of this lab was to get acquainted with the Arduino Uno microcontroller, and to build and control a basic robot. 
 
 _Lab:_
 
-First, we installed the Arduino IDE from this link: https://www.arduino.cc/en/Main/Software 
+First, we installed the Arduino IDE from this [link](https://www.arduino.cc/en/Main/Software)
 
 Second, we tested the blink sketch on the Arduino (File->Examples->Basics->Blink):
-Code-snippet:
 
-
-<video>
-
-
+<img src="/docs/images/Blink-sketch.png" alt="Blink sketch" width="400" height="284">
 
 Third, we modified it to work with an external LED, by adding these lines of code:
 
@@ -26,8 +20,8 @@ pinMode(9, OUTPUT); //Setup pin 9 as output
 digitalWrite(ledPin, HIGH); //Turn on LED
 digitalWrite(ledPin, LOW); //Turn off LED
 ```
+[![Blinky](ECE3400-2017-teamAlpha/docs/images/thumbnail_blinky.jpg)](https://youtu.be/tHVKVdAuRxc)
 
-<video>
 
 Fourth, we communicated over serial interface:
 
