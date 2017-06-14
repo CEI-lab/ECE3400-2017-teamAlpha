@@ -57,7 +57,7 @@ Finally, we assembled our robot and made it drive in a square:
 
 //Helpful links://
 
-* We found the [http://lmgtfy.com/?q=arduino+analog+write Arduino website] to be incredibly helpful.
+* We found the [Arduino website](http://lmgtfy.com/?q=arduino+analog+write Arduino website) to be incredibly helpful.
 * Also, this [https://playground.arduino.cc/Main/ShowInfo code] allows you to diagnose your Arduino Uno. Here, you can see how fast a clock cycle really is, how long a conversion takes, etc.
 
 # Lab 2 Signal Processing
