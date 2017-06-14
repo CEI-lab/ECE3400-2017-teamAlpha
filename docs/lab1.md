@@ -20,7 +20,7 @@ pinMode(9, OUTPUT); //Setup pin 9 as output
 digitalWrite(ledPin, HIGH); //Turn on LED
 digitalWrite(ledPin, LOW); //Turn off LED
 ```
-[![Blinky](ECE3400-2017-teamAlpha/docs/images/thumbnail_blinky.jpg)](https://youtu.be/tHVKVdAuRxc)
+[![Blinky](./docs/images/thumbnail_blinky.jpg)](https://youtu.be/tHVKVdAuRxc)
 
 
 Fourth, we communicated over serial interface:
