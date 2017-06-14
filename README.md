@@ -4,7 +4,7 @@ Our team members: Claire Chen, Christopher Fedors, Ryan O'Hern, and Kirstin Pete
 
 This website describes useful links, solutions to the labs, and our final robot, we hope you will find it useful and create much better websites yourselves!
 
-## Lab 1: "Build Your Robot"
+## Lab 1: Microprocessors
 
 //Goal:// 
 
@@ -59,5 +59,26 @@ Finally, we assembled our robot and made it drive in a square:
 
 * We found the [http://lmgtfy.com/?q=arduino+analog+write Arduino website] to be incredibly helpful.
 * Also, this [https://playground.arduino.cc/Main/ShowInfo code] allows you to diagnose your Arduino Uno. Here, you can see how fast a clock cycle really is, how long a conversion takes, etc.
+
+# Lab 2 Signal Processing
+
+Buzzer and IR?
+
+# Lab 3 Wireless Communication
+
+# Lab 4 Digital Logic
+
+//Goal:// Output data from an Arduino through an FPGA to a screen driver. 
+
+We worked in two sub-teams. Team 1 sent data from the Arduino to the FPGA and converted this to something that made sense on the screen - in our case a 2 by 2 array of bits. Team 2 displayed the 2 by 2 array on the screen and continuously updated it. By the end of the lab, we merged the two codes into one, such that we could flip a bit on the Arduino side, and see the change on the screen. In the future we will extend this to work with a full maze layout. 
+Fyi: Consider how to efficiently implement this so that it doesn't take up too much space on the FPGA. And not too many pins either. Serial or parallel?
+
+//Lab, team 1://
+
+
+//Lab, team 2://
+
+We were given a library to drive the screen: VGA_DRIVER_driver(.reset, .clock, .pixel_color_in, .
+
 
 
