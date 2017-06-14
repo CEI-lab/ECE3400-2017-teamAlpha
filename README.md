@@ -19,6 +19,8 @@ Code-snippet:
 
 <video>
 
+
+
 Third, we modified it to work with an external LED, by adding these lines of code:
 
 ```C
@@ -80,10 +82,9 @@ Fyi: Consider how to efficiently implement this so that it doesn't take up too m
 
 //Lab, team 2://
 
-We were given a VGA module to drive the screen, a layout of this module looks like this:
+We were given a VGA module to drive the screen. Reading through this module, we understand that it works as the illustrated sketch. Our job will be to modify the main module. 
 
-The module runs at 25MHz, sending out the value of the pixel to the screen, then sending back the next x,y coordinate for you to change. 
-
+![FPGA_screen_driver_module](/docs/images/FPGA_screen_driver.png)
 
 First, we changed the color of the screen to green, blue, and red.
 
