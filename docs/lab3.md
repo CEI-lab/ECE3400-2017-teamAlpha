@@ -1,7 +1,7 @@
 # Lab 3: Digital Logic
 ## Team Alpha, ECE 3400, Fall 2017
 
-_Goal: Take at least two external inputs to the FPGA and display them to a screen driver._
+_Goal: Take at least two external inputs to the FPGA and display them to a screen driver. Output a sound when done signal is high._
 
 We decided to connect two toggle switches and show the change in a 2-by-2 grid on the screen. Later, this code can be expanded to display the full maze. We worked in two sub-teams. Team 1 took in data from the switches, Team 2 displayed the array on the screen. 
 The following figure shows our task assignment:
@@ -80,7 +80,33 @@ INSERT VIDEO OF LEDs!
 
 Finally, we implemented our code in a separate module so that we could easily merge this with the code of Team 2 at the end of the lab.
 
-_Lab, team 2:_
+_Sound generation_
+
+First, we began by implementing the most basic sound wave - a square wave. We chose to generate a 440Hz wave and output this to  GPIO pin. For this, we wrote a simple state machine to increment a counter and output a pulse based on the value of that counter. Generating a wave of a certain frequency requires considering the frequency that our state machine is clocked at and choosing a counter value based on that to give us our desired frequency. The state machine clock is 25MHz, which means the period of the 440Hz wave will be approximately 56818 cycles (25MHz/440Hz) of the state machine clock period. In other words, square pulse must toggle every 25MHz/440Hz/2 cycles. The code to achieve that as well as a picture of our 440Hz square wave shown below.
+
+```verilog
+// Local parameter
+localparam CLKDIVIDER_440 = 25000000/440/2;
+
+// Sound variables
+reg square_440;                       // 440 Hz square wave
+assign GPIO[0] = square_440;
+reg [15:0] counter;
+
+// Sound state machine
+always @ (posedge CLOCK_25) begin
+  if (counter == 0) begin
+    counter    <= CLKDIVIDER_440 - 1; // reset clock
+    square_440 <= ~square_440;        // toggle the square pulse
+  end
+  else begin
+    counter    <= counter - 1;
+    square_440 <= square_440;
+  end
+end	
+```
+
+_Lab 3, team 2:_
 
 We were given a VGA module to drive the screen. We read through this module carefully, and came to the conclusion that it works like the following sketch illustrates. Our job will be to modify the main module. 
 
