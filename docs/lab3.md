@@ -139,3 +139,6 @@ Finally, we have to think about how this will work for our final system. We will
 * Will it still make sense to use parallel communication between the Arduino and the FPGA when you include all the states? How many bits total will we need to convey all the information at every new location?
 * Standardized coordinate system. How do we display the coordinates on the screen? How does the robot think about the maze as it travels? The standard way to interpret images and screens is to place the origin in the upmost left corner, making the positive x direction towards the right, and the positive y-direction downwards. 
 
+_Great links:_
+
+* Very useful links with code examples: http://www.fpga4fun.com/
