@@ -105,6 +105,7 @@ always @ (posedge CLOCK_25) begin
   end
 end	
 ```
+<img src="/docs/images/square_440.png" alt="440Hz square wave from GPIO pin" width="250" height="85"> 
 
 _Lab 3, team 2:_
 
