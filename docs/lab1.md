@@ -54,7 +54,7 @@ myservo.write(0);   //0 is full speed reverse, 90 no speed, 180 full speed ahead
 
 Finally, we assembled our robot and made it drive in a square:
 
-<img src="/docs/images/Assembly.jpg" alt="Robot parts" width="200" height="530">
+<img src="/docs/images/Assembly.jpg" alt="Robot parts" width="530" height="300">
 
 [![RobotDrivingInaSquare](images/thumbnail_square.jpg)](https://youtu.be/L83JydJF4H8)
 
