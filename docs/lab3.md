@@ -135,7 +135,7 @@ _Concluding Remarks:_
 
 Finally, we have to think about how this will work for our final system. We will have to display the full maze on the screen, including treasures, walls, unknown and travelled areas, and the robot itself. We also need to be able to display when the robot has finished traversing the maze.  Here are the questions we discussed:
 
-* How will we display the maze?
-* Will it still make sense to use parallel communication between the Arduino and the FPGA when you include all the states?
+* How will we display the maze? Do we stick with a similar array approach to hold the state of each grid space?
+* Will it still make sense to use parallel communication between the Arduino and the FPGA when you include all the states? How many bits total will we need to convey all the information at every new location?
 * Standardized coordinate system. How do we display the coordinates on the screen? How does the robot think about the maze as it travels? The standard way to interpret images and screens is to place the origin in the upmost left corner, making the positive x direction towards the right, and the positive y-direction downwards. 
 
