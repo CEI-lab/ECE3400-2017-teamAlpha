@@ -28,10 +28,13 @@ We connected two toggle switches to pins on the FPGA. Switch one control the x-c
 	 assign highlighted_y = GPIO[31];
 ```
 
-To check our code before the screen driver was ready from Team 2, we also added four LEDs to output pins. 
+To check our code before the screen driver was ready from Team 2, we also connected four of the LEDs on the FPGA board:
 
 ```verilog
-Add code to add LEDs to output pins
+assign LED[0] = grid_array[0][0];
+assign LED[1] = grid_array[0][1];
+assign LED[2] = grid_array[1][0];
+assign LED[3] = grid_array[1][1];
 ```
 
 We then made a state machine that loops through each register in the array and determines if those correspond to the position set by the switches (highlighted_x and highlighted_y):
