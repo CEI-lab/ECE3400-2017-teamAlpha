@@ -41,7 +41,7 @@ Serial.println(potmeter);  //Send the potmeter value to the screen
 analogWrite(ledPin, potmeter>>2); //The analog write function only takes 8bits, so we have to divide our value by 4
 ```
 
-VIDEO!
+[![Brightness_control](images/thumbnail_brightness_control.jpg)](https://youtu.be/s1B5GrTkDZo)
 
 Sixth, we controlled a continuous rotation servo-motor using the library servo.h:
 
@@ -51,13 +51,12 @@ Servo myservo;      //Declare instance
 myservo.attach(11); //Attach the servo input to pin 11 (set it up as a pwm output, 20Hz)
 myservo.write(0);   //0 is full speed reverse, 90 no speed, 180 full speed ahead
 ```
-<video>
 
 Finally, we assembled our robot and made it drive in a square:
 
-<pic of parts>
+<img src="/docs/images/Assembly.jpg" alt="Robot parts" width="300" height="530">
 
-<video>
+[![RobotDrivingInaSquare](images/thumbnail_square.jpg)](https://youtu.be/L83JydJF4H8)
 
 _Helpful links:_
 
