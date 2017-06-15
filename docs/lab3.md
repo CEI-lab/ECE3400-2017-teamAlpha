@@ -18,7 +18,7 @@ By the end of the lab, we merged the two codes into one, such that we could flip
 
 _Lab, team 1:_
 
-It is very important to remember that the FPGA only takes 3.3V inputs, the Arduino gives out 5V: do not connect pins directly!!
+It is very important to remember that the FPGA only takes 3.3V inputs, the Arduino gives out 5V: do not connect pins directly!! We used a voltage divider to solve this issue.
 
 [![Arduino_FPGA_interface](http://img.youtube.com/vi/0Av38ixX900/0.jpg)](https://youtu.be/0Av38ixX900)
 
@@ -37,7 +37,7 @@ assign PIXEL_COLOR = 8'b111_000_00 \\red
 assign PIXEL_COLOR = 8'b000_111_00 \\green
 assign PIXEL_COLOR = 8'b000_000_11 \\blue
 ```
-(Fyi, underscores in verilog are ignored by the compiler, they're just there for readability!)
+(Fyi, underscores in Verilog are ignored by the compiler, they're just there for readability!)
 
 Second, we drew a black square on a red screen, using an if-statement in a combinatorial block: 
 
@@ -58,8 +58,9 @@ Third, we want to draw a two by two grid.
 reg grid_array [1:0][1:0]; //2-by-2 array of [rows][columns]
 ```
 
-Next, we want to have a 2-by-2 grid and update the value in each square depending on the 2-by-2 array. 
-To do this we first make a module that converts pixels to 2-by-2 blocks of 64 pixels each: 
+Next, we want to have a 2-by-2 grid and update the value in each square depending on the 2-by-2 array of registers. Each register in the array holds the state information for one square of the grid: 0 for unhighlighted, and 1 for highlighted. 
+
+To accomplish this, we must first have some way of determining if the current pixel output by the VGA driver is in the grid, and if so, what square it is in. In order to create modularity in our code, we decided to write a new module that we could instantiate in our top-level module. The module takes in the current x- and y- coordinates from the VGA driver and outputs a 0 or 1 according to the grid space it is in, OR a 2 if the pixel is simply not in the grid. This module is shown below. 
 
 ```verilog
 `define GRID_TOP_LEFT_X 0   //Potential offset from the corner
@@ -104,7 +105,7 @@ module VGACOORD_2_GRIDCOORD(
 endmodule
 ```
 
-Now we change the main module to instantiate our module and always do:
+Now we change the main module to instantiate our module and set a color according to the grid coordinate of the current pixel.
 
 ```verilog
 
