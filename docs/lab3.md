@@ -19,9 +19,64 @@ By the end of the lab, we merged the two codes into one, such that we could flip
 _Lab, team 1:_
 
 It is very important to remember that the FPGA only takes 3.3V inputs, the Arduino gives out 5V: do not connect pins directly!! We used a voltage divider to solve this issue.
+We connected two switch to input pins, one controls the x axis, the other the y-axis:
 
-[![Arduino_FPGA_interface](http://img.youtube.com/vi/0Av38ixX900/0.jpg)](https://youtu.be/0Av38ixX900)
+```verilog
+	 // current highlighted square, input through GPIO pins
+	 wire highlighted_x;
+	 wire highlighted_y;	 
+	 assign highlighted_x = GPIO[33];
+	 assign highlighted_y = GPIO[31];
+```
 
+To check our code, we also added four LEDs to output pins. 
+
+```verilog
+Add code to add LEDs to output pins
+```
+
+We then made a state machine that loops through each register in the array and determines if those correspond to the position set by the switches (highlighted_x and highlighted_y):
+
+<img src="/docs/images/FPGA_state_machine.png" alt="FPGA_state_machine" width="250" height="85"> 
+
+```verilog
+
+// State 0: Loop through grid
+if (state == 0) begin
+  if (grid_ind_x < 1) begin         //If X-coordinate is 0
+    grid_ind_x <= grid_ind_x + 1;   //X-coordinate = 1
+  end
+  else begin                        //If X-coordinate is 1
+    grid_ind_x <= 0;                //X-coordinate = 0
+    if (grid_ind_y < 1) begin       //If Y-coordinate is 0
+      grid_ind_y <= grid_ind_y + 1; //Y-coordinate = 1
+    end
+    else begin                      //else Y-coordinate = 0
+      grid_ind_y <= 0;
+    end
+  end
+  state <= 1;                       //Switch to state 1
+end // state 0
+
+// State 1: If at highlighed coordinates, set grid space to 1, else set to 0
+else if (state == 1) begin
+  if (grid_ind_x == highlighted_x && grid_ind_y == highlighted_y) begin
+    grid_array[grid_ind_y][grid_ind_x] <= 1;
+  end
+  else begin
+    grid_array[grid_ind_y][grid_ind_x] <= 0;
+  end
+  state <= 0;
+end // state 1
+
+else begin                          //Default
+  state <= state;
+end
+```
+
+INSERT VIDEO OF LEDs!
+
+Finally, we implemented our code in a separate module so that we could easily merge this with the code of team 2 at the end of the lab.
 
 _Lab, team 2:_
 
@@ -130,6 +185,13 @@ if (grid_coord_x < 2 && grid_coord_y < 2) begin                                 
 end
 ```
 <img src="/docs/images/FPGA_screen.png" alt="FPGA_control_of_screen" width="400" height="225"> 
+
+
+_Merging the code:_
+
+Finally, we merged our code so that the switches toggled the state of the screen:
+
+
 
 _Concluding Remarks:_
 
