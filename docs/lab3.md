@@ -1,11 +1,14 @@
 # Lab 3: Digital Logic
 ## Team Alpha, ECE 3400, Fall 2017
 
-_Goal:_ 
-Output data from an Arduino through an FPGA to a screen driver. 
+_Goal: Take at least two external inputs to the FPGA and display them to a screen driver._
 
-We worked in two sub-teams. Team 1 sent data from the Arduino to the FPGA and converted this to something that made sense on the screen - we decided to display a 2-by-2 array of bits. Team 2 displayed the array on the screen and continuously updated it. 
-First we had to agree on an interface, in our case this is the 2-by-2 array, defined as:
+We decided to connect two toggle switches and show the change in a 2-by-2 grid on the screen. Later, this code can be expanded to display the full maze. We worked in two sub-teams. Team 1 took in data from the switches, Team 2 displayed the array on the screen. 
+The following figure shows our task assignment:
+
+<img src="/docs/images/lab3_team_assignment.png" alt="lab3_assignment" width="600" height="134"> 
+
+We also had to agree on an interface between our code segments, in our case this is the 2-by-2 array of bits: 
 
 ```verilog
 reg grid_array [1:0][1:0]; //[rows][columns]
@@ -13,13 +16,9 @@ wire [1:0] grid_coord_x; //Index x into the array
 wire [1:0] grid_coord_y; //Index y into the array
 ```
 
-By the end of the lab, we merged the two codes into one, such that we could flip a bit on the Arduino side, and see the change on the screen. In the future we will extend this to work with a full maze layout. 
+_Lab3, team 1:_
 
-
-_Lab, team 1:_
-
-It is very important to remember that the FPGA only takes 3.3V inputs, the Arduino gives out 5V: do not connect pins directly!! We used a voltage divider to solve this issue.
-We connected two switch to input pins, one controls the x axis, the other the y-axis:
+We connected two toggle switches to pins on the FPGA. Switch one control the x-coordinate, switch two the y-coordinate of the highlighted square:
 
 ```verilog
 	 // current highlighted square, input through GPIO pins
@@ -29,7 +28,7 @@ We connected two switch to input pins, one controls the x axis, the other the y-
 	 assign highlighted_y = GPIO[31];
 ```
 
-To check our code, we also added four LEDs to output pins. 
+To check our code before the screen driver was ready from Team 2, we also added four LEDs to output pins. 
 
 ```verilog
 Add code to add LEDs to output pins
@@ -76,11 +75,11 @@ end
 
 INSERT VIDEO OF LEDs!
 
-Finally, we implemented our code in a separate module so that we could easily merge this with the code of team 2 at the end of the lab.
+Finally, we implemented our code in a separate module so that we could easily merge this with the code of Team 2 at the end of the lab.
 
 _Lab, team 2:_
 
-We were given a VGA module to drive the screen. Reading through this module, we understand that it works as the illustrated sketch. Our job will be to modify the main module. 
+We were given a VGA module to drive the screen. We read through this module carefully, and came to the conclusion that it works like the following sketch illustrates. Our job will be to modify the main module. 
 
 <img src="/docs/images/FPGA_screen_driver.png" alt="FPGA_screen_driver_module" width="600" height="232">
 
@@ -108,12 +107,7 @@ end
 ```
 The signal inside the bracket is called a sensitivity list. An asterix means that the block will run when any of the signals inside change. We are comparing our 10-bit pixel coordinates to constants. These constants are defined as 10-bits (10), decimal value (d), 64.
 
-Third, we want to draw a two by two grid. 
-```verilog
-reg grid_array [1:0][1:0]; //2-by-2 array of [rows][columns]
-```
-
-Next, we want to have a 2-by-2 grid and update the value in each square depending on the 2-by-2 array of registers. Each register in the array holds the state information for one square of the grid: 0 for unhighlighted, and 1 for highlighted. 
+Third, we want to draw four boxes on the screen and color them dependent on the values in our array (0 for not highlighted, and 1 for highlighted). 
 
 To accomplish this, we must first have some way of determining if the current pixel output by the VGA driver is in the grid, and if so, what square it is in. In order to create modularity in our code, we decided to write a new module that we could instantiate in our top-level module. The module takes in the current x- and y- coordinates from the VGA driver and outputs a 0 or 1 according to the grid space it is in, OR a 2 if the pixel is simply not in the grid. This module is shown below. 
 
