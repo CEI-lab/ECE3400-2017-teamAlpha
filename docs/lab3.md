@@ -20,7 +20,7 @@ _Lab, team 1:_
 
 It is very important to remember that the FPGA only takes 3.3V inputs, the Arduino gives out 5V: do not connect pins directly!!
 
-[![Arduino_FPGA_interface](images/Arduino_FPGA_interface.png)](https://youtu.be/0Av38ixX900)
+![Arduino_FPGA_interface](images/Arduino_FPGA_interface.png)](https://youtu.be/0Av38ixX900)
 
 
 _Lab, team 2:_
