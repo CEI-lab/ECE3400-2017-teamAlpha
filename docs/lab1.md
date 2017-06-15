@@ -54,11 +54,11 @@ myservo.write(0);   //0 is full speed reverse, 90 no speed, 180 full speed ahead
 
 Finally, we assembled our robot and made it drive in a square:
 
-<img src="/docs/images/Assembly.jpg" alt="Robot parts" width="300" height="530">
+<img src="/docs/images/Assembly.jpg" alt="Robot parts" width="200" height="530">
 
 [![RobotDrivingInaSquare](images/thumbnail_square.jpg)](https://youtu.be/L83JydJF4H8)
 
 _Helpful links:_
 
-* We found the [Arduino website](http://lmgtfy.com/?q=arduino+analog+write Arduino website) to be incredibly helpful.
-* Also, this [https://playground.arduino.cc/Main/ShowInfo code] allows you to diagnose your Arduino Uno. Here, you can see how fast a clock cycle really is, how long a conversion takes, etc.
+* We found the [Arduino website](http://lmgtfy.com/?q=arduino+analog+write%20Arduino%20website) to be incredibly helpful.
+* Also, this [code](https://playground.arduino.cc/Main/ShowInfo) allows you to diagnose your Arduino Uno. Here, you can see how fast a clock cycle really is, how long a conversion takes, etc.
