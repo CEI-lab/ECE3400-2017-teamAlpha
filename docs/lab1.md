@@ -52,7 +52,7 @@ myservo.attach(11); //Attach the servo input to pin 11 (set it up as a pwm outpu
 myservo.write(0);   //0 is full speed reverse, 90 no speed, 180 full speed ahead
 ```
 
-Finally, we assembled our robot and made it drive in a square:
+Finally, we assembled our robot and made it drive in a (sorta) square. Clearly we need to tune the motor values better, and start relying on sensors to track the black lines in the future!
 
 <img src="/docs/images/Assembly.jpg" alt="Robot parts" width="530" height="300">
 
