@@ -112,7 +112,7 @@ We were able to generate a tone using a simple square wave, but for more pleasan
 
 To generate the output for a triangle wave, we incremented and decremented an 8-bit counter (from 0 to 255) every 110 cycles to obtain a 440Hz triangle wave. Using the same line of thinking as for the square wave, we knew that we wanted one cycle of our wave to go from 0 to 255 to 0 in 56818 25MHz clock cycles. From here, we reasoned that the counter must increment or decrement every 110 cycles in order to go from 0 to 255 to 0 in the desired number of clock cycles. Below is a picture of our generated triangle wave, as well as the state machine to increment the counter.
 
-<img src="/docs/images/triangle_440.png" alt="440Hz triangle wave from GPIO pin" width="400" height="350"> 
+<img src="/docs/images/triangle_440.png" alt="440Hz triangle wave" width="400" height="350"> 
 
 ```verilog
   reg  [7:0] tri_value;       // 8-bit wave-output counter        
@@ -158,7 +158,7 @@ For those who are interested, the easiest way to generate a sine wave in Verilog
 
 To learn more about inferring memory architecture and using templates in Quartus, check out this link: [Recommended HDL coding styles](https://people.ece.cornell.edu/land/courses/ece5760/DE1_SOC/HDL_style_qts_qii51007.pdf). 
 
-Below is our sine table ROM module, which is based off the Quartus template. We then iteratively output values from this table to generate our sine wave.
+Below is our sine table ROM module, which is based off the Quartus template. We then iteratively output values from this table to generate our sine wave, which is also shown in an image below.
 
 ```verilog
 module SINE_ROM
@@ -184,6 +184,8 @@ module SINE_ROM
     q <= sine[addr];
   end
 ```
+
+<img src="/docs/images/sine_440.png" alt="440Hz sine wave" width="400" height="350"> 
 
 After all of this experimentation, we finally decided that the sine wave produced the most pleasant sounding timbre - so we chose to create our 3-pitch tune by using three sine waves of different frequencies.
 
