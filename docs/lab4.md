@@ -14,7 +14,7 @@ First we handled the hardware:
 - Found two Arduinos.
 - Plugged the radios into the Arduinos along with the 3.3V wire.
 
-![Arduino with radio](/images/radio.png)
+![Arduino with radio](images/radio.png)
 
 ### Software: Getting Started
 
