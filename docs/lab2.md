@@ -9,9 +9,13 @@ Second, we read through the example code provided with the Open Music Labs FFT l
 
 ### TODO: Add the arduino info script where we timed the ADC conversion. Explain the theoretical maximum speed of ADC free-running versus analogRead().
 
+***fft_adc_serial***
 ***All comments here were added by the ECE3400 TA's:***
 ```C
-cli(); // Turn off global interrupts
+cli(); // Turn off global interrupts.
+// We do not want the Arduino context switching during the sampling process to
+// handle an interrupt.
+
 // Grab 256 samples. Note that this does not reference FFT_N, defined at the top
 // of the script, as it should. This is bad style and could introduce a bug, as
 // this code will always take 256 samples even if FFT_N changes.
