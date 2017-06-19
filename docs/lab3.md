@@ -76,7 +76,7 @@ else begin                          //Default
 end
 ```
 
-INSERT VIDEO OF LEDs!
+[![FPGA_leds](images/FPGA_read_in'n'out.png)](https://youtu.be/gW4KrWujsEI)
 
 Finally, we implemented our code in a separate module so that we could easily merge this with the code of Team 2 at the end of the lab.
 
@@ -110,7 +110,7 @@ We were able to generate a tone using a simple square wave, but for more pleasan
 
 **Claire TODO: take picture of circuit and insert here**
 
-To generate the output for a triangle wave, we incremented and decremented an 8-bit counter (from 0 to 255) every 110 cycles to obtain a 440Hz triangle wave. Using the same line of thinking as for the square wave, we knew that we wanted one cycle of our wave to go from 0 to 255 to 0 in 56818 25MHz clock cycles. From here, we reasoned that the counter must increment or decrement every 110 cycles in order to go from 0 to 255 to 0 in the desired number of clock cycles. Below is a picture of our generated triangle wave, as well as the state machine to increment the counter.
+To generate the output for a triangle wave of 440Hz, we incremented and decremented an 8-bit counter (from 0 to 255) every 110 cycles. Using the same line of thinking as for the square wave, we knew that we wanted one cycle of our wave to go from 0 to 255 to 0 in 56818 25MHz clock cycles. From here, we reasoned that the counter must increment or decrement every 110 cycles in order to go from 0 to 255 to 0 in the desired number of clock cycles. Below is a picture of our generated triangle wave, as well as the state machine to increment the counter.
 
 <img src="/docs/images/triangle_440.png" alt="440Hz triangle wave" width="400" height="350"> 
 
@@ -154,7 +154,7 @@ To generate the output for a triangle wave, we incremented and decremented an 8-
    end // always @ (posedge CLOCK_25)
 ```
 
-For those who are interested, the easiest way to generate a sine wave in Verilog is to initialize a sine table in ROM and then iterate through these values to produced the frequency you desire. This technique is known as direct digital synthesis (DDS) - if you take ECE4760, you'll learn more about this from Bruce! Generating a table containing data points that form a sine wave by hand is painful, so we used Matlab to that for us. We then copied and pasted that generated table directly from a .txt file created by Matlab to a Verilog module. To create a Verilog module that Quartus can infer as a ROM block, we used a template provided by Quartus. Inferring a memory block like ROM means that when the HDL is synthesized on the FPGA, Quartus will know to use the chip's memory bits to create a standardized ROM architecture. 
+The easiest way to generate a sine wave in Verilog is to initialize a sine table in ROM and then iterate through these values to produced the frequency you desire. This technique is known as direct digital synthesis (DDS) - if you take ECE4760, you'll learn more about this from Bruce! Generating a table containing data points that form a sine wave by hand is painful, so we used Matlab to that for us. We then copied and pasted that generated table directly from a .txt file created by Matlab to a Verilog module. To create a Verilog module that Quartus can infer as a ROM block, we used a template provided by Quartus. Inferring a memory block like ROM means that when the HDL is synthesized on the FPGA, Quartus will know to use the chip's memory bits to create a standardized ROM architecture. 
 
 To learn more about inferring memory architecture and using templates in Quartus, check out this link: [Recommended HDL coding styles](https://people.ece.cornell.edu/land/courses/ece5760/DE1_SOC/HDL_style_qts_qii51007.pdf). 
 
@@ -186,6 +186,7 @@ module SINE_ROM
 ```
 
 <img src="/docs/images/sine_440.png" alt="440Hz sine wave" width="400" height="350"> 
+
 
 After all of this experimentation, we finally decided that the sine wave produced the most pleasant sounding timbre - so we chose to create our 3-pitch tune by using three sine waves of different frequencies.
 
