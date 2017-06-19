@@ -74,7 +74,7 @@ The choice between using the built-in analogRead() function and free running mod
 ### Open Music FFT script
 We read through the example code provided with the Open Music Labs FFT library (fft_adc_serial.pde). This code interacts with the Arduino's ADC directly in "free running" mode, bypassing the interface provided by analogRead(). As shown above, this allows us to sample from the ADC faster than the analogRead().
 
-To understand the writes to ADCSRA, you need to read [the datasheet for our microcontroller](http://www.atmel.com/Images/Atmel-8271-8-bit-AVR-Microcontroller-ATmega48A-48PA-88A-88PA-168A-168PA-328-328P_datasheet_Summary.pdf).
+To understand the writes to the ADCSRA register, you need to read [the datasheet for our microcontroller](http://www.atmel.com/Images/Atmel-8271-8-bit-AVR-Microcontroller-ATmega48A-48PA-88A-88PA-168A-168PA-328-328P_datasheet_Summary.pdf).
 
 ***Note: the comments here were added by the ECE3400 TA's.***
 ```C
@@ -118,10 +118,17 @@ sei(); // Turn on global interrupts.
 
 
 ### Microphone test circuit
-- Images of the circuit with amplifier
+We build our microphone circuit with an amplifier.
+
+![Microphone, image 0](images/amp0.png)
+![Microphone, image 1](images/amp1.png)
 
 
 ### Testing the FFT using the function generator
+Using the Open Music Library code, we expect our FFT buckets to have a width of 9600/256 = 37.5Hz. 660 / 37.5 = 17.6, so we expect our FFT spike to appear in the 18th bucket.
+
+![Frequency generator](images/frequency_generator.jpg)
+
 - Timing --> bucket math
 - Function generator screen shot
 - Serial output
