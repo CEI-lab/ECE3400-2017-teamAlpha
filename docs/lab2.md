@@ -9,15 +9,66 @@ First, we found a [web application to generate a tone](http://www.szynalski.com/
 ![Tone generator](images/tone_generator.png)
 
 ### Timing ADC capture: analogRead() versus Free Running Mode
-- Information on the GetInfo Arduino script
-- Screen capture of GetInfo output
+The accuracy of our FFT depends on the sampling frequency of our computation, Fs. Fs is determined by several factors:
+- clock speed of the Arduino (16MHz is the default, but this can be modified)
+- clock speed of the ADC (this is some factor of the clock speed of the Arduino)
+- number of bits captured by the ADC
+
+The ADC grabs data off the wire in a step called a "conversion". A conversion takes more than one clock cycle. In the case of the specific Atmel chip (aka the Arduino) we are using for this class, a conversion takes 13 clock cycles.
+
+We found a [good explanation of these factors](http://www.microsmart.co.za/technical/2014/03/01/advanced-arduino-adc/). The choice between using the built-in analogRead() function and "free running" mode on the ADC can results in a 1kHz improvement in Fs.
+
+We timed the analogRead() function using the ShowInfo script [found on the Arduino website](https://playground.arduino.cc/Main/ShowInfo). Running the "Speed tests" option gives an output like this:
+
+```
+Speed test
+----------
+F_CPU = 16000000 Hz
+1/F_CPU = 0.0625 us
+The next tests are runtime compensated for overhead
+Interrupts are still enabled, because millis() is used for timing
+  nop                       : 0.063 us
+  avr gcc I/O               : 0.125 us
+  Arduino digitalRead       : 3.585 us
+  Arduino digitalWrite      : 5.092 us
+  pinMode                   : 4.217 us
+  multiply byte             : 0.632 us
+  divide byte               : 5.412 us
+  add byte                  : 0.569 us
+  multiply integer          : 1.387 us
+  divide integer            : 14.277 us
+  add integer               : 0.883 us
+  multiply long             : 6.100 us
+  divide long               : 38.687 us
+  add long                  : 1.763 us
+  multiply float            : 7.110 us
+  divide float              : 79.962 us
+  add float                 : 9.227 us
+  itoa()                    : 13.397 us
+  ltoa()                    : 126.487 us
+  dtostrf()                 : 78.962 us
+  random()                  : 51.512 us
+  y |= (1<<x)               : 0.569 us
+  bitSet()                  : 0.569 us
+  analogRead()              : 111.987 us
+  analogWrite() PWM         : 11.732 us
+  delay(1)                  : 1006.987 us
+  delay(100)                : 99999.984 us
+  delayMicroseconds(2)      : 0.506 us
+  delayMicroseconds(5)      : 3.587 us
+  delayMicroseconds(100)    : 99.087 us
+-----------
+```
+
+An analogRead() takes 111.987µs. This gives a frequency of 8928.5Hz.
+
+The calculation on the reference website indicates that in free running mode using the default clock settings on the Arduino (16MHz clock, 125kHz ADC clock, 13 cycle conversion) we can expect a sample rate of 9600Hz.
 
 
 ### Open Music FFT script
 We read through the example code provided with the Open Music Labs FFT library (fft_adc_serial.pde). This code interacts with the Arduino's ADC directly in "free running" mode, bypassing the interface provided by analogRead(). As shown above, this allows us to sample from the ADC faster than the analogRead().
 
-***fft_adc_serial***
-***All comments here were added by the ECE3400 TA's:***
+***Note: the comments here were added by the ECE3400 TA's.***
 ```C
 cli(); // Turn off global interrupts.
 // We do not want the Arduino context switching during the sampling process to
@@ -29,7 +80,7 @@ cli(); // Turn off global interrupts.
 for (int i = 0 ; i < 512 ; i += 2) {
   // The ADC is controlled by writing directly to the control register, ADCSRA.
   // This allows us to avoid the overhead involved with
-  // Wait for the ADC to convert.
+  // Wait for the ADC to be ready.
   while(!(ADCSRA & 0x10));
   // Restart the conversion.
   ADCSRA = 0xf5;
@@ -54,7 +105,7 @@ fft_window();
 fft_reorder();
 fft_run();
 fft_mag_log();
-sei(); // Turn on global interrupts
+sei(); // Turn on global interrupts.
 ```
 
 
