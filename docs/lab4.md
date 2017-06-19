@@ -99,3 +99,63 @@ We want to send three pieces of information, the x-coordinate, the y-coordinate,
 This gives us 8 bits of data, which can be packed into a single byte. (Note: the default payload size is 32 bytes, so to actually reduce the # of bytes sent by the radio requires changing this setting.)
 
 We pack our byte using a bit shifting scheme and send it in a single payload. It is unpacked on the receiver side using masking along with bit shifting.
+
+Sender side:
+```C
+unsigned char new_data;
+// Pack the bits in this pattern
+// x_coord | y_coord | data
+// 3 bits  | 3 bits  | 2 bits
+// This scheme supports a maze up to 8 x 8
+
+// Test data
+unsigned char x_coord = 4;
+unsigned char y_coord = 4;
+unsigned char pos_data = 3;
+
+// Use bit shifting to pack the bits
+// For deployment with a robot, something like this should be factored out into
+// a function, along with the code to unpack the bits
+new_data = x_coord << 5 | y_coord << 2 | pos_data;
+// For the test case of (5, 5, 3) the byte shoud look like: 10010011
+// In decimal this is 147
+
+// Take the time, and send it.  This will block until complete
+printf("Now sending new map data\n");
+bool ok = radio.write( &new_data, sizeof(unsigned char) );
+
+if (ok)
+  printf("ok...");
+else
+  printf("failed.\n\r");
+
+// Now, continue listening
+radio.startListening();
+```
+
+In binary this packed character looks like 10010011. In decimal notation this is 147. We can easily check on the receiver side that the right byte is being received by taking advantage of this.
+
+Receiver side:
+```C
+unsigned char got_data;
+bool done = false;
+while (!done)
+{
+  // Fetch the payload, and see if this was the last one.
+  done = radio.read( &got_data, sizeof(unsigned char) );
+
+  // Spew it
+  // Print the received data as a decimal
+  printf("Got payload %d...",got_data);
+
+  // Delay just a little bit to let the other unit
+  // make the transition to receiver
+  delay(20);
+
+}
+
+// First, stop listening so we can talk
+radio.stopListening();
+```
+
+If our code is correct, this will print: ```Got payload 147...```
