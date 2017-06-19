@@ -35,6 +35,7 @@ We chose to send each position in the maze as a character. According the documen
 
 [Note: The original lab writeup does not appear to consider this option and assumes every character will be sent as its own payload.]
 
+***Defining the maze:***
 ``` C
 //
 // Maze
@@ -49,7 +50,7 @@ unsigned char maze[5][5] =
 };
 ```
 
-Sender side:
+***Sender side:***
 ``` C
 // Send the maze in a single payload
 printf("Now sending the maze!\n");
@@ -64,7 +65,7 @@ else
 radio.startListening();
 ```
 
-Receiver side:
+***Receiver side:***
 ``` C
 unsigned char got_maze[5][5];
 bool done = false;
@@ -100,7 +101,7 @@ This gives us 8 bits of data, which can be packed into a single byte. (Note: the
 
 We pack our byte using a bit shifting scheme and send it in a single payload. It is unpacked on the receiver side using masking along with bit shifting.
 
-Sender side:
+***Sender side:***
 ```C
 unsigned char new_data;
 // Pack the bits in this pattern
@@ -135,7 +136,7 @@ radio.startListening();
 
 In binary this packed character looks like 10010011. In decimal notation this is 147. We can easily check on the receiver side that the right byte is being received by taking advantage of this.
 
-Receiver side:
+***Receiver side:***
 ```C
 unsigned char got_data;
 bool done = false;
