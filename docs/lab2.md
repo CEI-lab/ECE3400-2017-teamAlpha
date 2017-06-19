@@ -74,6 +74,8 @@ The choice between using the built-in analogRead() function and free running mod
 ### Open Music FFT script
 We read through the example code provided with the Open Music Labs FFT library (fft_adc_serial.pde). This code interacts with the Arduino's ADC directly in "free running" mode, bypassing the interface provided by analogRead(). As shown above, this allows us to sample from the ADC faster than the analogRead().
 
+To understand the writes to ADCSRA, you need to read [the datasheet for our microcontroller](http://www.atmel.com/Images/Atmel-8271-8-bit-AVR-Microcontroller-ATmega48A-48PA-88A-88PA-168A-168PA-328-328P_datasheet_Summary.pdf).
+
 ***Note: the comments here were added by the ECE3400 TA's.***
 ```C
 cli(); // Turn off global interrupts.
