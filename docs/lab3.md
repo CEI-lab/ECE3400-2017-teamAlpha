@@ -37,7 +37,7 @@ assign LED[2] = grid_array[1][0];
 assign LED[3] = grid_array[1][1];
 ```
 
-We then made a state machine that loops through each register in the array and determines if those correspond to the position set by the switches (highlighted_x and highlighted_y):
+We then made a state machine that loops through each register in the array and determines if those correspond to the position set by the switches (highlighted_x and highlighted_y). We then output that to 4 LED's ![video](https://youtu.be/gW4KrWujsEI).
 
 <img src="/docs/images/FPGA_state_machine.png" alt="FPGA_state_machine" width="250" height="85"> 
 
@@ -75,8 +75,6 @@ else begin                          //Default
   state <= state;
 end
 ```
-
-[![FPGA_leds](images/FPGA_read_in'n'out.png)](https://youtu.be/gW4KrWujsEI)
 
 Finally, we implemented our code in a separate module so that we could easily merge this with the code of Team 2 at the end of the lab.
 
