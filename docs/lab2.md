@@ -11,12 +11,12 @@ First, we found a [web application to generate a tone](http://www.szynalski.com/
 ### Timing ADC capture: analogRead() versus Free Running Mode
 The accuracy of our FFT depends on the sampling frequency of our computation, Fs. Fs is determined by several factors:
 - clock speed of the Arduino (16MHz is the default, but this can be modified)
-- clock speed of the ADC (this is some factor of the clock speed of the Arduino)
+- clock speed of the ADC (this is some factor of the clock speed of the Arduino which can be changed with a prescalar)
 - number of bits captured by the ADC
 
 The ADC grabs data off the wire in a step called a "conversion". A conversion takes more than one clock cycle. In the case of the specific Atmel chip (aka the Arduino) we are using for this class, a conversion takes 13 clock cycles.
 
-We found a [good explanation of these factors](http://www.microsmart.co.za/technical/2014/03/01/advanced-arduino-adc/). The choice between using the built-in analogRead() function and "free running" mode on the ADC can results in a 1kHz improvement in Fs.
+We found a [good explanation of these factors](http://www.microsmart.co.za/technical/2014/03/01/advanced-arduino-adc/) and how to calculate Fs.
 
 We timed the analogRead() function using the ShowInfo script [found on the Arduino website](https://playground.arduino.cc/Main/ShowInfo). Running the "Speed tests" option gives an output like this:
 
@@ -62,7 +62,9 @@ Interrupts are still enabled, because millis() is used for timing
 
 An analogRead() takes 111.987µs. This gives a frequency of 8928.5Hz.
 
-The calculation on the reference website indicates that in free running mode using the default clock settings on the Arduino (16MHz clock, 125kHz ADC clock, 13 cycle conversion) we can expect a sample rate of 9600Hz.
+In free running mode using the default clock settings on the Arduino (16MHz clock, 125kHz ADC clock, 13 cycle conversion) we can expect a sample rate of ~9600Hz (125000 / 13 = 9615.4).
+
+The choice between using the built-in analogRead() function and free running mode on the ADC can result in a ~700Hz improvement in Fs. This is why the Open Music FFT samples use the free running approach.
 
 
 ### Open Music FFT script
