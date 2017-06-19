@@ -175,8 +175,9 @@ end
 <img src="/docs/images/FPGA_screen.png" alt="FPGA_control_of_screen" width="400" height="225"> 
 
 
-Finally, we merged our code so that the switches toggled the state of the screen.
+Finally, we merged our code so that the switches toggled the state of the screen:
 
+[![FPGA Screen Interface](images/Arduino_FPGA_interface.png)](https://youtu.be/KMW1bO6gJTg)
 
 
 _Lab 3, team 2:_
