@@ -1,9 +1,10 @@
 # Lab 3: Digital Logic
 ## Team Alpha, ECE 3400, Fall 2017
 
-_Goal: This lab is divided into two. One (half-) team will take at least two external inputs to the FPGA and display them on a screen. The other team will react to an external input of their choice and output a short 'tune' consisting of at least three tones - This tone will correspond to a signal indicating that the robot is done searching the maze._
+### Goal: 
+This lab is divided into two. One (half-) team will take at least two external inputs to the FPGA and display them on a screen. The other team will react to an external input of their choice and output a short 'tune' consisting of at least three tones - This tone will correspond to a signal indicating that the robot is done searching the maze.
 
-_Lab3 Team 1, Screen Driver:_
+### Lab3 Team 1, Screen Driver:
 
 We decided to connect two toggle switches and show the change in a 2-by-2 grid on the screen. Later, this code can be expanded to display the full maze. The following figure shows an overview of our system:
 
@@ -180,9 +181,7 @@ Finally, we merged our code so that the switches toggled the state of the screen
 [![FPGA Screen Interface](images/Arduino_FPGA_interface.png)](https://youtu.be/KMW1bO6gJTg)
 
 
-_Lab 3, team 2:_
-
-_Sound generation_
+### Lab 3 Team 2: Sound generation
 
 First, we began by implementing the most basic sound wave - a square wave. We chose to generate a 440Hz wave and output this to  GPIO pin. For this, we wrote a simple state machine to increment a counter and output a pulse based on the value of that counter. Generating a wave of a certain frequency requires considering the frequency that our state machine is clocked at and choosing a counter value based on that to give us our desired frequency. The state machine clock is 25MHz, which means the period of the 440Hz wave will be approximately 56818 cycles (25MHz/440Hz) of the state machine clock period. In other words, square pulse must toggle every 25MHz/440Hz/2 cycles. The code to achieve that as well as a picture of our 440Hz square wave shown below.
 
@@ -294,7 +293,7 @@ After all of this experimentation, we finally decided that the sine wave produce
 
 <img src="/docs/images/square_440.png" alt="440Hz square wave from GPIO pin" width="400" height="350"> 
 
-_Concluding Remarks:_
+### Concluding Remarks:
 
 Finally, we have to think about how this will work for our final system. We will have to display the full maze on the screen, including treasures, walls, unknown and travelled areas, and the robot itself. We also need to be able to display when the robot has finished traversing the maze.  Here are the questions we discussed:
 
@@ -302,6 +301,6 @@ Finally, we have to think about how this will work for our final system. We will
 * Will it still make sense to use parallel communication between the Arduino and the FPGA when you include all the states? How many bits total will we need to convey all the information at every new location?
 * Standardized coordinate system. How do we display the coordinates on the screen? How does the robot think about the maze as it travels? The standard way to interpret images and screens is to place the origin in the upmost left corner, making the positive x direction towards the right, and the positive y-direction downwards. 
 
-_Great links:_
+### Great links:
 
 * Very useful links with code examples: http://www.fpga4fun.com/
