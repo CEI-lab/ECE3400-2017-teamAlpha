@@ -1,43 +1,30 @@
 # Lab 3: Digital Logic
 ## Team Alpha, ECE 3400, Fall 2017
 
-_Goal: Take at least two external inputs to the FPGA and display them to a screen driver. Output a short 'tune' consisting of at least three tones when given a done signal._
+_Goal: This lab is divided into two. One (half-) team will take at least two external inputs to the FPGA and display them on a screen. The other team will react to an external input of their choice and output a short 'tune' consisting of at least three tones - This tone will correspond to a signal indicating that the robot is done searching the maze._
 
-We decided to connect two toggle switches and show the change in a 2-by-2 grid on the screen. Later, this code can be expanded to display the full maze. We worked in two sub-teams. Team 1 took in data from the switches, Team 2 displayed the array on the screen. 
-The following figure shows our task assignment:
+_Lab3 Team 1, Screen Driver:_
+
+We decided to connect two toggle switches and show the change in a 2-by-2 grid on the screen. Later, this code can be expanded to display the full maze. The following figure shows an overview of our system:
 
 <img src="/docs/images/lab3_team_assignment.png" alt="lab3_assignment" width="600" height="134"> 
 
-We also had to agree on an interface between our code segments, in our case this is the 2-by-2 array of bits: 
+First, we declared our 2-by-2 array of bits, and switch 1 to control the x-coordinate and switch 2 to control the y-coordinate of the highlighted square: 
 
 ```verilog
+//2-by-2 array of bits
 reg grid_array [1:0][1:0]; //[rows][columns]
 wire [1:0] grid_coord_x; //Index x into the array
 wire [1:0] grid_coord_y; //Index y into the array
+// current highlighted square
+ wire highlighted_x;
+ wire highlighted_y;	 
+//Switch input through GPIO pins
+ assign highlighted_x = GPIO[33];
+ assign highlighted_y = GPIO[31];
 ```
 
-_Lab3, team 1:_
-
-We connected two toggle switches to pins on the FPGA. Switch one control the x-coordinate, switch two the y-coordinate of the highlighted square:
-
-```verilog
-	 // current highlighted square, input through GPIO pins
-	 wire highlighted_x;
-	 wire highlighted_y;	 
-	 assign highlighted_x = GPIO[33];
-	 assign highlighted_y = GPIO[31];
-```
-
-To check our code before the screen driver was ready from Team 2, we also connected four of the LEDs on the FPGA board:
-
-```verilog
-assign LED[0] = grid_array[0][0];
-assign LED[1] = grid_array[0][1];
-assign LED[2] = grid_array[1][0];
-assign LED[3] = grid_array[1][1];
-```
-
-We then made a state machine that loops through each register in the array and determines if those correspond to the position set by the switches (highlighted_x and highlighted_y). We then output that to 4 LED's ![video](https://youtu.be/gW4KrWujsEI).
+We then made a state machine that loops through each register in the array and determines if those correspond to the position set by the switches (highlighted_x and highlighted_y):
 
 <img src="/docs/images/FPGA_state_machine.png" alt="FPGA_state_machine" width="250" height="85"> 
 
@@ -76,7 +63,123 @@ else begin                          //Default
 end
 ```
 
-Finally, we implemented our code in a separate module so that we could easily merge this with the code of Team 2 at the end of the lab.
+To check our code without the screen, we first connected four of the LEDs on the FPGA board, each one representing a different position in the grid. 
+
+```verilog
+assign LED[0] = grid_array[0][0];
+assign LED[1] = grid_array[0][1];
+assign LED[2] = grid_array[1][0];
+assign LED[3] = grid_array[1][1];
+```
+See a video of our system here: ![video](https://youtu.be/gW4KrWujsEI).
+
+Next, we were given a VGA module to drive the screen. We read through this module carefully, and came to the conclusion that it works like the following sketch illustrates. Our job will be to modify the main module. 
+
+<img src="/docs/images/FPGA_screen_driver.png" alt="FPGA_screen_driver_module" width="600" height="232">
+
+First, we changed the color of the screen to green, blue, and red.
+
+```verilog
+assign PIXEL_COLOR = 8'b000_000_00 \\black
+assign PIXEL_COLOR = 8'b111_000_00 \\red
+assign PIXEL_COLOR = 8'b000_111_00 \\green
+assign PIXEL_COLOR = 8'b000_000_11 \\blue
+```
+(Fyi, underscores in Verilog are ignored by the compiler, they're just there for readability!)
+
+Second, we drew a black square on a red screen, using an if-statement in a combinatorial block: 
+
+```verilog
+always @ (*) begin 
+  if(PIXEL_COORD_X < 10'd64 && PIXEL_COORD_Y < 10'd64) begin
+    PIXEL_COLOR = 8'b000_000_00;
+  end
+  else begin
+    PIXEL_COLOR = 8'b111_000_00;
+  end
+end
+```
+The signal inside the bracket is called a sensitivity list. An asterix means that the block will run when any of the signals inside change. We are comparing our 10-bit pixel coordinates to constants. These constants are defined as 10-bits (10), decimal value (d), 64.
+
+Third, we want to draw four boxes on the screen and color them dependent on the values in our array (0 for not highlighted, and 1 for highlighted). 
+
+To accomplish this, we must first have some way of determining if the current pixel output by the VGA driver is in the grid, and if so, what square it is in. In order to create modularity in our code, we decided to write a new module that we could instantiate in our top-level module. The module takes in the current x- and y- coordinates from the VGA driver and outputs a 0 or 1 according to the grid space it is in, OR a 2 if the pixel is simply not in the grid. This module is shown below. 
+
+```verilog
+`define GRID_TOP_LEFT_X 0   //Potential offset from the corner
+`define GRID_TOP_LEFT_Y 0   //Potential offset from the corner
+`define BLOCK_SIZE      64  //Each block will be 64 by 64 pixels
+
+module VGACOORD_2_GRIDCOORD(
+  vga_pixel_x,  
+  vga_pixel_y,
+  grid_coord_x,
+  grid_coord_y
+  );  //Specify all inputs and outputs to the module
+
+  input  [9:0] vga_pixel_x;   //Specify the direction and number of bits in the signal
+  input  [9:0] vga_pixel_y;
+  output reg [1:0] grid_coord_x;
+  output reg [1:0] grid_coord_y;
+  
+  always @ (*) begin          //begin combinatorial logic to determine which block the pixel is in
+    if (vga_pixel_x < `BLOCK_SIZE && vga_pixel_y < `BLOCK_SIZE) begin               //Upper left block
+      grid_coord_x = 0;
+      grid_coord_y = 0;
+    end
+    else if (vga_pixel_x < `BLOCK_SIZE && vga_pixel_y < `BLOCK_SIZE * 2) begin      //Lower left block
+      grid_coord_x = 0;
+      grid_coord_y = 1;
+    end
+    else if (vga_pixel_x < `BLOCK_SIZE * 2 && vga_pixel_y < `BLOCK_SIZE) begin      //Uper right block
+      grid_coord_x = 1;
+      grid_coord_y = 0;
+    end
+    else if (vga_pixel_x < `BLOCK_SIZE * 2 && vga_pixel_y < `BLOCK_SIZE * 2) begin  //Lower right block
+      grid_coord_x = 1;
+      grid_coord_y = 1;
+    end
+    else begin                                                                      //Not in the grid
+      grid_coord_x = 2;                                               
+      grid_coord_y = 2; 
+    end
+  end
+\
+endmodule
+```
+
+Now we change the main module to instantiate our module and set a color according to the grid coordinate of the current pixel.
+
+```verilog
+
+VGACOORD_2_GRIDCOORD vgacoord_2_gridcoord(    //Instantiate module
+  .vga_pixel_x(PIXEL_COORD_X),                //The text after the periods refers to internal wires in the module
+  .vga_pixel_y(PIXEL_COORD_Y),                //The text in the parantheses refers to wires external to the module
+  .grid_coord_x(grid_coord_x),
+  .grid_coord_y(grid_coord_y)
+  );
+
+//Always run:
+if (grid_coord_x < 2 && grid_coord_y < 2) begin                                   //If within grid
+  if (grid_array[grid_coord_y][grid_coord_x] == 1) begin                          //If array reads 1, color square red
+    PIXEL_COLOR <= 8'b111_000_00;
+  end
+  else begin
+    PIXEL_COLOR <= 8'b111_111_11;
+  end
+  else begin
+    PIXEL_COLOR <= 9'b000_000_00;
+  end
+end
+```
+<img src="/docs/images/FPGA_screen.png" alt="FPGA_control_of_screen" width="400" height="225"> 
+
+
+Finally, we merged our code so that the switches toggled the state of the screen.
+
+
+
+_Lab 3, team 2:_
 
 _Sound generation_
 
@@ -189,116 +292,6 @@ module SINE_ROM
 After all of this experimentation, we finally decided that the sine wave produced the most pleasant sounding timbre - so we chose to create our 3-pitch tune by using three sine waves of different frequencies.
 
 <img src="/docs/images/square_440.png" alt="440Hz square wave from GPIO pin" width="400" height="350"> 
-
-_Lab 3, team 2:_
-
-We were given a VGA module to drive the screen. We read through this module carefully, and came to the conclusion that it works like the following sketch illustrates. Our job will be to modify the main module. 
-
-<img src="/docs/images/FPGA_screen_driver.png" alt="FPGA_screen_driver_module" width="600" height="232">
-
-First, we changed the color of the screen to green, blue, and red.
-
-```verilog
-assign PIXEL_COLOR = 8'b000_000_00 \\black
-assign PIXEL_COLOR = 8'b111_000_00 \\red
-assign PIXEL_COLOR = 8'b000_111_00 \\green
-assign PIXEL_COLOR = 8'b000_000_11 \\blue
-```
-(Fyi, underscores in Verilog are ignored by the compiler, they're just there for readability!)
-
-Second, we drew a black square on a red screen, using an if-statement in a combinatorial block: 
-
-```verilog
-always @ (*) begin 
-  if(PIXEL_COORD_X < 10'd64 && PIXEL_COORD_Y < 10'd64) begin
-    PIXEL_COLOR = 8'b000_000_00;
-  end
-  else begin
-    PIXEL_COLOR = 8'b111_000_00;
-  end
-end
-```
-The signal inside the bracket is called a sensitivity list. An asterix means that the block will run when any of the signals inside change. We are comparing our 10-bit pixel coordinates to constants. These constants are defined as 10-bits (10), decimal value (d), 64.
-
-Third, we want to draw four boxes on the screen and color them dependent on the values in our array (0 for not highlighted, and 1 for highlighted). 
-
-To accomplish this, we must first have some way of determining if the current pixel output by the VGA driver is in the grid, and if so, what square it is in. In order to create modularity in our code, we decided to write a new module that we could instantiate in our top-level module. The module takes in the current x- and y- coordinates from the VGA driver and outputs a 0 or 1 according to the grid space it is in, OR a 2 if the pixel is simply not in the grid. This module is shown below. 
-
-```verilog
-`define GRID_TOP_LEFT_X 0   //Potential offset from the corner
-`define GRID_TOP_LEFT_Y 0   //Potential offset from the corner
-`define BLOCK_SIZE      64  //Each block will be 64 by 64 pixels
-
-module VGACOORD_2_GRIDCOORD(
-  vga_pixel_x,  
-  vga_pixel_y,
-  grid_coord_x,
-  grid_coord_y
-  );  //Specify all inputs and outputs to the module
-
-  input  [9:0] vga_pixel_x;   //Specify the direction and number of bits in the signal
-  input  [9:0] vga_pixel_y;
-  output reg [1:0] grid_coord_x;
-  output reg [1:0] grid_coord_y;
-  
-  always @ (*) begin          //begin combinatorial logic to determine which block the pixel is in
-    if (vga_pixel_x < `BLOCK_SIZE && vga_pixel_y < `BLOCK_SIZE) begin               //Upper left block
-      grid_coord_x = 0;
-      grid_coord_y = 0;
-    end
-    else if (vga_pixel_x < `BLOCK_SIZE && vga_pixel_y < `BLOCK_SIZE * 2) begin      //Lower left block
-      grid_coord_x = 0;
-      grid_coord_y = 1;
-    end
-    else if (vga_pixel_x < `BLOCK_SIZE * 2 && vga_pixel_y < `BLOCK_SIZE) begin      //Uper right block
-      grid_coord_x = 1;
-      grid_coord_y = 0;
-    end
-    else if (vga_pixel_x < `BLOCK_SIZE * 2 && vga_pixel_y < `BLOCK_SIZE * 2) begin  //Lower right block
-      grid_coord_x = 1;
-      grid_coord_y = 1;
-    end
-    else begin                                                                      //Not in the grid
-      grid_coord_x = 2;                                               
-      grid_coord_y = 2; 
-    end
-  end
-\
-endmodule
-```
-
-Now we change the main module to instantiate our module and set a color according to the grid coordinate of the current pixel.
-
-```verilog
-
-VGACOORD_2_GRIDCOORD vgacoord_2_gridcoord(    //Instantiate module
-  .vga_pixel_x(PIXEL_COORD_X),                //The text after the periods refers to internal wires in the module
-  .vga_pixel_y(PIXEL_COORD_Y),                //The text in the parantheses refers to wires external to the module
-  .grid_coord_x(grid_coord_x),
-  .grid_coord_y(grid_coord_y)
-  );
-
-//Always run:
-if (grid_coord_x < 2 && grid_coord_y < 2) begin                                   //If within grid
-  if (grid_array[grid_coord_y][grid_coord_x] == 1) begin                          //If array reads 1, color square red
-    PIXEL_COLOR <= 8'b111_000_00;
-  end
-  else begin
-    PIXEL_COLOR <= 8'b111_111_11;
-  end
-  else begin
-    PIXEL_COLOR <= 9'b000_000_00;
-  end
-end
-```
-<img src="/docs/images/FPGA_screen.png" alt="FPGA_control_of_screen" width="400" height="225"> 
-
-
-_Merging the code:_
-
-Finally, we merged our code so that the switches toggled the state of the screen:
-
-
 
 _Concluding Remarks:_
 
