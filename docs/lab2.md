@@ -1,20 +1,24 @@
 # Lab 2
 ## Team Alpha
 
-Goal: Capture a 660Hz tone using the Electret microphone, amplify the signal, and process the signal using a Fast Fourier Transform running on the Arduino. Show the expected spike in the FFT bin in our output containing 660Hz.
+Goals:
+- Capture a 660Hz tone using the Electret microphone.
+- Amplify the signal if necessary.
+- Process the signal using a Fast Fourier Transform running on the Arduino.
+- Show the expected spike in the FFT bin in the output containing 660Hz.
 
 ### Tone generation
-First, we found a [web application to generate a tone](http://www.szynalski.com/tone-generator).
+We found a nice [web application to generate a tone](http://www.szynalski.com/tone-generator).
 
 ![Tone generator](images/tone_generator.png)
 
 ### Timing ADC capture: analogRead() versus Free Running Mode
 The accuracy of our FFT depends on the sampling frequency of our computation, Fs. Fs is determined by several factors:
-- clock speed of the Arduino (16MHz is the default, but this can be modified)
-- clock speed of the ADC (this is some factor of the clock speed of the Arduino which can be changed with a prescalar)
-- number of bits captured by the ADC
+- The clock speed of the Arduino. 16MHz is the default, but this can be modified.
+- The clock speed of the ADC. This is some factor of the clock speed of the Arduino which can be changed with a prescalar.
+- The number of bits captured by the ADC.
 
-The ADC grabs data off the wire in a step called a "conversion". A conversion takes more than one clock cycle. In the case of the specific Atmel chip (aka the Arduino) we are using for this class, a conversion takes 13 clock cycles.
+The ADC grabs data off the wire in a step called a "conversion". A conversion takes more than one clock cycle. In the case of the specific Atmel chip used in this course (aka the Arduino), a conversion takes 13 clock cycles.
 
 We found a [good explanation of these factors](http://www.microsmart.co.za/technical/2014/03/01/advanced-arduino-adc/) and how to calculate Fs.
 
@@ -60,11 +64,11 @@ Interrupts are still enabled, because millis() is used for timing
 -----------
 ```
 
-An analogRead() takes 111.987µs. This gives a frequency of 8928.5Hz.
+According to these tests, an analogRead() takes 111.987µs. This gives a frequency of 8928.5Hz.
 
-In free running mode using the default clock settings on the Arduino (16MHz clock, 125kHz ADC clock, 13 cycle conversion) we can expect a sample rate of ~9600Hz (125000 / 13 = 9615.4).
+In free running mode using the default clock settings on the Arduino (16MHz clock, 125kHz ADC clock, 13 cycle conversion) we can expect a sample rate of ~9600Hz: 125000 cycles/second / 13 cycles/sample = 9615.4Hz.
 
-The choice between using the built-in analogRead() function and free running mode on the ADC can result in a ~700Hz improvement in Fs. This is why the Open Music FFT samples use the free running approach.
+The choice between using the built-in analogRead() function and free running mode on the ADC can result in a ~700Hz improvement in Fs. This is why the Open Music FFT samples using the free running approach.
 
 
 ### Open Music FFT script
