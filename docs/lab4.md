@@ -9,7 +9,7 @@ First we handled the hardware:
 - Download the radio library and install with the Arduino IDE.
   https://github.com/maniacbug/RF24
 - Download the GettingStarted example from the lab4 course repository.
-- Soldering two radio headers.
+- We skippped soldering two radio headers as there were already complete versions in the lab.
 - Found two radios.
 - Found two Arduinos.
 - Plugged the radios into the Arduinos along with the 3.3V wire.
@@ -20,6 +20,12 @@ First we handled the hardware:
 
 Then we handled the software for GettingStarted:
 - Set the two channel numbers for our team according to the formula given in the lab handout.
+
+``` C
+// Radio pipe addresses for the 2 nodes to communicate.
+const uint64_t pipes[2] = { 0x0000000002LL, 0x0000000003LL };
+```
+
 - Program both Arduinos with the GettingStarted example.
 - Plug both Arduinos into the PC simultaneously. Use the serial monitor to set one to transmit mode and confirm that it says it is sending messages. Switch to the other on the serial monitor to see if it is receiving these messages.
 
@@ -28,6 +34,59 @@ Then we handled the software for GettingStarted:
 We chose to send each position in the maze as a character. According the documentation for the radio library, the default payload size is 32 bytes, so we have more than enough room to send 25 characters for our 5 x 5 maze. We can send the entire maze as a single payload.
 
 [Note: The original lab writeup does not appear to consider this option and assumes every character will be sent as its own payload.]
+
+``` C
+//
+// Maze
+//
+unsigned char maze[5][5] =
+{
+  3, 3, 3, 3, 3,
+  3, 1, 1, 1, 3,
+  3, 2, 0, 1, 2,
+  3, 1, 3, 1, 3,
+  3, 0, 3, 1, 0
+};
+```
+
+Sender side:
+``` C
+// Send the maze in a single payload
+printf("Now sending the maze!\n");
+bool ok = radio.write( maze, sizeof(maze) );
+
+if (ok)
+  printf("ok...");
+else
+  printf("failed.\n\r");
+
+// Now, continue listening
+radio.startListening();
+```
+
+Receiver side:
+``` C
+unsigned char got_maze[5][5];
+bool done = false;
+while (!done)
+{
+  // Fetch the payload.
+  done = radio.read( got_maze, sizeof(got_maze) );
+
+  // Print the maze
+  for (int i=0; i < 5; i++) {
+    for (int j=0; j < 5; j++) {
+      printf("%d ", got_maze[i][j]);
+    }
+    printf("\n");
+  }
+
+  // Delay just a little bit to let the other unit
+  // make the transition to receiver
+  delay(20);
+
+}
+```
 
 Because the radio library implements Acks behind the scenes (this is handled by radio.write()), we do not need to manually acknowledge received packets.
 
