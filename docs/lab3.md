@@ -287,7 +287,7 @@ module SINE_ROM
   end
 ```
 
-<img src="/docs/images/lab3_sin3440.png" alt="440Hz sine wave" width="455" height="350"> 
+<img src="/docs/images/lab3_sine440.png" alt="440Hz sine wave" width="455" height="350"> 
 
 After all of this experimentation, we finally decided that the sine wave produced the most pleasant sounding timbre - so we chose to create our 3-pitch tune by using three sine waves of different frequencies. We wanted our basic tune to consist of three consecutive notes, each played for one second. We chose to represent a 'done' signal with an on-board switch; the tune would play when one of the switches on the FPGA was switched on. To generate the tune, we used two additional counters: one to keep track of the duration of each note and one to keep track of how many notes have been played. To make the top-level code easier to read, we moved the sine-generation state machine to a separate module which chooses a counter value based on the desired frequency. Below is the code snippet used to generate our three-note tune.
 
