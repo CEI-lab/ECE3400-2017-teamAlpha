@@ -105,6 +105,7 @@ always @ (posedge CLOCK_25) begin
   end
 end	
 ```
+<img src="/docs/images/lab3_square440.png" alt="440Hz square wave from GPIO pin" width="455" height="350"> 
 
 We were able to generate a tone using a simple square wave, but for more pleasant sounding tones, we also tried generating a triangle wave and a sine wave. For these waves, we used an [8-bit R2R DAC](http://www.bourns.com/docs/Product-Datasheets/R2R.pdf) to take an 8-bit digital output from the FPGA and convert this into analog voltages that can be played through generic speakers. 
 
@@ -112,7 +113,7 @@ We were able to generate a tone using a simple square wave, but for more pleasan
 
 To generate the output for a triangle wave, we incremented and decremented an 8-bit counter (from 0 to 255) every 110 cycles to obtain a 440Hz triangle wave. Using the same line of thinking as for the square wave, we knew that we wanted one cycle of our wave to go from 0 to 255 to 0 in 56818 25MHz clock cycles. From here, we reasoned that the counter must increment or decrement every 110 cycles in order to go from 0 to 255 to 0 in the desired number of clock cycles. Below is a picture of our generated triangle wave, as well as the state machine to increment the counter.
 
-<img src="/docs/images/triangle_440.png" alt="440Hz triangle wave" width="400" height="350"> 
+<img src="/docs/images/lab3_triangle440.png" alt="440Hz triangle wave" width="455" height="350"> 
 
 ```verilog
   reg  [7:0] tri_value;       // 8-bit wave-output counter        
@@ -185,11 +186,70 @@ module SINE_ROM
   end
 ```
 
-<img src="/docs/images/sine_440.png" alt="440Hz sine wave" width="400" height="350"> 
+<img src="/docs/images/lab3_sin3440.png" alt="440Hz sine wave" width="455" height="350"> 
 
-After all of this experimentation, we finally decided that the sine wave produced the most pleasant sounding timbre - so we chose to create our 3-pitch tune by using three sine waves of different frequencies.
+After all of this experimentation, we finally decided that the sine wave produced the most pleasant sounding timbre - so we chose to create our 3-pitch tune by using three sine waves of different frequencies. We wanted our basic tune to consist of three consecutive notes, each played for one second. We chose to represent a 'done' signal with an on-board switch; the tune would play when one of the switches on the FPGA was switched on. To generate the tune, we used two additional counters: one to keep track of the duration of each note and one to keep track of how many notes have been played. To make the top-level code easier to read, we moved the sine-generation state machine to a separate module which chooses a counter value based on the desired frequency. Below is the code snippet used to generate our three-note tune.
 
-<img src="/docs/images/square_440.png" alt="440Hz square wave from GPIO pin" width="400" height="350"> 
+```verilog
+  // tune generation state machine
+  always @ (posedge CLOCK_25) begin
+    if (reset) begin
+      enable_sound <= 0;
+      tone_duration_counter <= 0;
+      tone_number_counter <= 0;
+      sound_freq <= 10'd440;
+    end
+    if (~SW[3]) begin
+      if (tone_number_counter == 0) begin
+        enable_sound <= 1;
+        sound_freq   <= 10'd262; // middle c
+
+        // play tone for one second
+        if (tone_duration_counter == `ONE_SEC) begin
+          tone_duration_counter <= 0;
+          tone_number_counter   <= tone_number_counter + 1;
+        end
+        else begin
+          tone_duration_counter <= tone_duration_counter + 1;
+        end
+      end //0th tone
+      else if (tone_number_counter == 1) begin
+        enable_sound <= 1;
+        sound_freq   <= 10'd330; // middle e
+        
+        // play tone for one second
+        if (tone_duration_counter == `ONE_SEC) begin
+          tone_duration_counter <= 0;
+          tone_number_counter   <= tone_number_counter + 1;
+        end
+        else begin
+          tone_duration_counter <= tone_duration_counter + 1;
+        end
+      end //1st tone
+      else if (tone_number_counter == 2) begin
+        enable_sound <= 1;
+        sound_freq   <= 10'd392; // middle g
+        
+        // play tone for one second
+        if (tone_duration_counter == `ONE_SEC) begin
+          tone_duration_counter <= 0;
+          tone_number_counter   <= tone_number_counter + 1;
+        end
+        else begin
+          tone_duration_counter <= tone_duration_counter + 1;
+        end
+      end //2nd tone
+      else begin
+        enable_sound <= 0;   // done playing tune, so disable sound 
+      end
+    end
+    else begin
+      enable_sound <= 0;
+      sound_freq <= 10'd440;
+    end
+  end //always @ (posedge clk)
+```
+
 
 _Lab 3, team 2:_
 
