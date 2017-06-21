@@ -3,6 +3,8 @@
 
 Note: This lab requires two Arduinos powered on simultaneously. It is fine to have two Arduinos connected to the same PC, but you will only be able to talk to one over the serial monitor at a time in the Arduino IDE. Change between the two by choosing between the two ports in the Tools --> Port menu.
 
+## Radio
+
 ### Hardware
 
 First we handled the hardware:
@@ -160,3 +162,19 @@ radio.stopListening();
 ```
 
 If our code is correct, this will print: ```Got payload 147...```
+
+## FPGA
+
+We followed the steps suggested in the lab handout and were able to receive the robot's current location from the Arduino and display this as well as the previous position on the VGA monitor. We were able to accomplish the first step of making the grid larger relatively quickly, as our code from lab 3 was easily scaled-up. 
+
+![4 by 5 grid](images/lab4_4by5.png)
+
+Next, after some brainstorming, we decided to use SPI rather than the parallel method of communcation we chose to implement in lab 3. Even though the parallel method is much simpler to implement, we weighed the pros and cons of each method and decided that SPI makes more sense when transmitting packets that are several bits long. SPI is the most complex part of our FPGA design since it requires working with two clocks: the FPGA 25MHz system clock and the SPI clock. All of the VGA drawing is clocked on the system clock, while data on the SPI MOSI line comes in with SCLK. We needed to find some way of synchronizing these two clocks to read packets correctly.  
+
+The best way getting outut to aid in debugging FPGA code is to output signals to GPIO signals and probe them with a scope. Using a scope to view signals helped us immensely in the process of writing a functional SPI unit, as it allowed us to completely understand how SPI signals from the Arduino behave and how our signals were responding. First, we probed the SPI signals from the Arduino: SCLK, MOSI, and Chip select (CS). The images below show SCLK as well as both the CS (top image) and MOSI (bottom image) lines (we couldn't view all these signals at once since the scopes in lab only have 2 inputs). The most notable thing we learned from probing the signals is that the SCLK signal is _NOT_ always on; if you send one 8-bit packet, there will only be 8 SCLK cycles. This will be important to keep in mind when writing your SPI code.
+
+SCLK (yellow) and CS (blue)
+![SCLK and CS](images/lab4_sclk_cs.png)
+
+SCLK (yellow) and MOSI (blue)
+![SCLK and MOSI](images/lab4_sclk_mosi.png)
