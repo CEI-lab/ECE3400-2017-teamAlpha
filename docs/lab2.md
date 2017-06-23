@@ -27,9 +27,9 @@ We started by running the example script fft_adc_serial. Before jumping to sampl
 
 We set the generator to 660Hz, 1.65Vpp (3.3V/2), with a 0.825V offset (1.65V/2). These setting were confirmed using the oscilloscope.
 
-![Fig. 1: Function Generator](images/lab2_func_generator.png)
+![Fig. 1: Function Generator](images/func_generator.jpg)
 
-![Fig. 2: Oscilloscope](images/lab2_scope.png)
+![Fig. 2: Oscilloscope](images/scope.jpg)
 
 We captured data using the fft_adc_serial script that comes with the Open Music Lab FFT library.
 
