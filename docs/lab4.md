@@ -181,6 +181,7 @@ SCLK (yellow) and MOSI (blue)
 
 Since SCLK only happens when packets are being transmitted, we thought that sampling SCLK using the FPGA clock would be the best way to synchronize all the SPI signals with the system clock. _Note: This sampling implemenation only works because we know the SPI clock is slower than the FPGA clock._ We use shift registers (clocked on the FPGA clock) to hold the history of all three SPI signals. By storing the recent history of SCLK, we are able to detect a rising edges. When CS is low (CS is active-low), we sample the MOSI line on every rising SCLK edge. We know the packet is complete when we've read in 8-bits. We then parse the valid packet into x-coordinate and y-coordinate values, and use these to change the state of the corresonding index in our grid array.
 
+Video of FPGA displaying current location from Arduino
 [![Displaying current location](http://img.youtube.com/vi/25ztPch7OUc/0.jpg)](http://www.youtube.com/watch?v=25ztPch7OUc)
 
 
@@ -188,4 +189,5 @@ The final part of this lab was to mark all previously-visited on the grid. To ac
 
 The video below shows the final deliverable for this lab: coordinates being sent from the Arduino to the FPGA via SPI and the robot's current and previous locations being displayed on the screen.
 
+Video of FPGA displaying current and previous locations
 [![Displaying current and previous location](http://img.youtube.com/vi/nVu4KmAXPKM/0.jpg)](http://www.youtube.com/watch?v=nVu4KmAXPKM)
