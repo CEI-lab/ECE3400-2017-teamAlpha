@@ -11,3 +11,4 @@ Testing images:
 
 ### Other Documents
 - [Starting on Your Robot](starting_your_robot.md)
+- [Grading](Grading/Semester_Score.md)
