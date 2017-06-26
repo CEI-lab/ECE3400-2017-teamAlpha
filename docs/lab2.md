@@ -21,7 +21,7 @@ The accuracy of our FFT depends on the sampling frequency of our computation, Fs
 The default configuration for the ADC clock is 125kHz. A conversion takes 13 clock cycles. Therefore the maximum sampling frequency is 125000 / 13 = ~9600Hz.
 
 ### Free Running Mode: fft_adc_serial
-The lab asked us to download the Open Music Lab FFT library. We installed this to our Arduino idea.
+The lab asked us to download the Open Music Lab FFT library. We installed this to our Arduino IDE by copying the directory into the 'libraries' folder.
 
 We started by running the example script fft_adc_serial. Before jumping to sampling data from the microphone, we first tested this script using the function generator present in the lab.
 
