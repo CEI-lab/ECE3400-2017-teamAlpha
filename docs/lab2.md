@@ -18,7 +18,7 @@ The accuracy of our FFT depends on the sampling frequency of our computation, Fs
 - The clock speed of the ADC. This is factor of the clock speed of the Arduino which can be modified. The ADC clock is determined by a the main clock speed divided by a prescalar, which must be a power of 2.
 - The number of bits captured by the ADC. The ADC grabs data off the wire in a step called a "conversion". A conversion takes more than one clock cycle. In the case of the specific Atmel chip used in this course (aka the Arduino) and its 10-bit ADC, a conversion takes 13 clock cycles.
 
-The default configuration for the ADC clock is 125kHz. At conversion takes 13 clock cycles. Therefore the maximum sampling frequency is 125000 / 13 = ~9600Hz.
+The default configuration for the ADC clock is 125kHz. A conversion takes 13 clock cycles. Therefore the maximum sampling frequency is 125000 / 13 = ~9600Hz.
 
 ### Free Running Mode: fft_adc_serial
 The lab asked us to download the Open Music Lab FFT library. We installed this to our Arduino idea.
