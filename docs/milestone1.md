@@ -1,4 +1,4 @@
-# Milestone 1
+# Milestone 1: Line-following
 ## Team Alpha
 
 ### Line following
