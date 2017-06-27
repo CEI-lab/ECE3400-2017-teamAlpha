@@ -202,4 +202,4 @@ We checked the frequency set on our treasure using the oscilloscope.
 
 We connected the IR signal to pin A0 on our Arduino and moved the treasure near to the IR sensor. Because of the nature of our amplifier, producing a square wave, we expect to see harmonics on our FFT output. Our result shows these harmonics, with the fundamental of 21100Hz (the frequency to which we set the treasure) having the highest spike:
 
-![IR fft](images/ir_fft.jpg)
+![IR fft](images/ir_fft.png)
