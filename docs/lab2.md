@@ -67,7 +67,9 @@ As you can see from the graph of our output, the FFT algorithm is behaving sensi
 
 These data suggest that we are sampling at over 40kHz. This makes sense with 660Hz appearing in the 5th bin, as 40000Hz / 256 = 156Hz. 5 * 156Hz = 780. 780 - 156 = 624Hz, so with this sampling frequency, 660Hz would indeed appear in the 5th bucket.
 
-However, remembering that the ADC clock is set by the main clock speed divided by a power of 2, there are only a few options for the sampling frequency.
+However, remembering that the ADC clock is set by the main clock speed divided by a power of 2, there are only a few options for the sampling frequency.  
+
+```
 16000000 / 128 = 125kHz  
 125kHz / 13 = ~9600Hz  
 
@@ -76,10 +78,11 @@ However, remembering that the ADC clock is set by the main clock speed divided b
 
 16000000 / 32 = 500kHz  
 500kHz / 13 = ~38kHz  
+```
 
 38kHz / 256 = 148.4Hz per bin in our FFT. This matches up well with our results. Knowing this, we have strong reason to suspect that the default settings for the ADC clock are being modified somewhere by our FFT library or by the script we are running.
 
-Looking more closely at the fft_adc_serial script, there is an obvious suspect line:
+Looking more closely at the fft_adc_serial script, we noticed there is an obvious suspect line:
 
 ``` C
 void setup() {
@@ -91,7 +94,7 @@ void setup() {
 }
 ```
 
-ADCSRA appears to be a register controlling the ADC. [Checking the datasheet](http://www.atmel.com/images/Atmel-8271-8-bit-AVR-Microcontroller-ATmega48A-48PA-88A-88PA-168A-168PA-328-328P_datasheet_Complete.pdf) confirms this. The datasheet allowed us to disambiguate line and determine that the ADC clock was in fact being adjusted by this script before the FFT was run.
+ADCSRA appears to be a register controlling the ADC. [Checking the datasheet](http://www.atmel.com/images/Atmel-8271-8-bit-AVR-Microcontroller-ATmega48A-48PA-88A-88PA-168A-168PA-328-328P_datasheet_Complete.pdf) confirms this. The datasheet allowed us to disambiguate this line and determine that the ADC clock is being adjusted by this script before the FFT is run.
 
 ![Fig. 4: ADCSRA](images/adcsra.png)
 
