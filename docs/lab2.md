@@ -8,35 +8,30 @@
 
 - Capture IR pulses from the treasure. Amplify the signal if necessary. Show the expected spike in the FFT output matching the frequency set on the treasure.
 
-### Tone generation
-We found a nice [web application to generate a tone](http://www.szynalski.com/tone-generator).
-
-![Tone generator](images/tone_generator.png)
-
-### Timing ADC capture: analogRead() versus Free Running Mode
+### ADC capture: analogRead() versus Free Running Mode
 The accuracy of our FFT depends on the sampling frequency of our computation, *Fs*. Fs is determined by several factors:
 - The clock speed of the Arduino. 16MHz is the default, but this can be modified.
-- The clock speed of the ADC. This is a factor of the clock speed of the Arduino. The ADC clock is determined as the Arduino clock speed divided by a prescalar, which must be a power of 2.
+- The clock speed of the ADC. This is a factor of the clock speed of the Arduino. The ADC clock is set as the Arduino clock speed divided by a prescalar, which must be a power of 2.
 - The number of bits captured by the ADC. The ADC grabs data off the wire in a step called a "conversion". A conversion takes more than one clock cycle. In the case of the specific Atmel chip used in this course (aka the Arduino) and its 10-bit ADC, a conversion takes 13 clock cycles.
 
-The default configuration for the ADC clock is 125kHz. At conversion takes 13 clock cycles. Therefore the maximum sampling frequency is 125000 / 13 = **~9600Hz**.
+The default configuration for the ADC clock is 125kHz. At conversion takes 13 clock cycles. Therefore the maximum default sampling frequency is 125000 / 13 = **~9600Hz**.
 
 ### Free Running Mode: fft_adc_serial
-The lab asked us to download the Open Music Lab FFT library. We installed this to our Arduino IDE by copying the directory into the 'libraries' folder.
+The lab asks us to download the Open Music Lab FFT library. We installed this to our Arduino IDE by copying the directory into the 'libraries' folder.
 
 We started by running the example script *fft_adc_serial*. Before jumping to sampling data from the microphone, we first tested this script using the function generator in the lab.
 
-We set the generator to 660Hz, 1.65Vpp (3.3V/2), with a 0.825V offset (1.65V/2). These setting were confirmed using the oscilloscope.
+We set the function generator to 660Hz, 1.65Vpp (3.3V/2), with a 0.825V offset (1.65V/2). We confirmed these settings with the oscilloscope.
 
 ![Fig. 1: Function Generator](images/func_generator.jpg)
 
 ![Fig. 2: Oscilloscope](images/scope.jpg)
 
-We then captured data using the fft_adc_serial script.
+We then captured data using the fft_adc_serial script from the Open Music Lab library.
 
-This script is set to collect 256 samples for each run of the FFT. Running at a sampling frequency of 9600Hz, this gives us 9600 / 256 = 37.5Hz per bin in our FFT. 660Hz / 37.5Hz = 17.6. So we expect to see the peak for our 660Hz input to appear in the 17th bin in our output.
+This script is set to collect 256 samples each run of the FFT. Running at a sampling frequency of 9600Hz, this gives the FFT bins a width of 9600 / 256 = 37.5Hz. 660Hz / 37.5Hz = 17.6. Therefore, we expect to see the peak for the 660Hz input to appear in the 17th bin in our output.
 
-However, with an input of 660Hz we found an unusual result: the peak for the 660Hz tone appears in the 5th bin in our output.
+However, with an input of 660Hz we found an unusual result: the peak for the 660Hz tone appears in the 5th bin.
 
 One reason to use the function generator to create our input is that it makes changing that input simple. We gathered samples for integer multiples of 660Hz, first to investigate if the FFT algorithm is behaving sensibly at all (do the peaks appear in bins numbered with integer multiples of 5?) and second to get an idea of what the sample frequency, Fs, might be to produce this result.
 
@@ -56,11 +51,11 @@ The peak for each frequency appears in the following bins:
 21120: 116
 ```
 
-As you can see from the graph of our output, the FFT algorithm is behaving sensibly. The integer multiples of 660Hz appear in equally spaced bins. Strangely, we are able to detect much higher frequencies than expected. According to the Nyquist sampling frequency, the highest frequency we should be able to detect is Fs/2. Yet, we can correctly discern frequencies far above 9600Hz/2.
+As you can see from the graph of our output, the FFT algorithm is behaving sensibly. The integer multiples of 660Hz appear in equally spaced bins. Strangely, we are able to detect much higher frequencies than expected. According to the Nyquist–Shannon sampling theorem, the highest frequency we should be able to detect is Fs/2. Yet, we can correctly discern frequencies far above 9600Hz/2.
 
 These data suggest that we are sampling at over 40kHz. This makes sense with 660Hz appearing in the 5th bin, as 40000Hz / 256 = 156Hz. 5 * 156Hz = 780. 780 - 156 = 624Hz, so with this sampling frequency, 660Hz would indeed appear in the 5th bucket.
 
-However, remembering that the ADC clock is set by the main clock speed divided by a power of 2, there are only a few options for the sampling frequency.  
+However, remembering that the ADC clock is set by the main clock speed divided by a power of 2, there are only a few possibilities for the sampling frequency:  
 
 ```
 16000000 / 128 = 125kHz  
@@ -87,21 +82,19 @@ void setup() {
 }
 ```
 
-ADCSRA appears to be a register controlling the ADC. [Checking the datasheet](http://www.atmel.com/images/Atmel-8271-8-bit-AVR-Microcontroller-ATmega48A-48PA-88A-88PA-168A-168PA-328-328P_datasheet_Complete.pdf) confirms this. The datasheet allowed us to disambiguate this line and determine that the ADC clock is being adjusted by this script before the FFT is run.
+Given its name, we suspected ADCSRA to be a register controlling the ADC. [Checking the datasheet](http://www.atmel.com/images/Atmel-8271-8-bit-AVR-Microcontroller-ATmega48A-48PA-88A-88PA-168A-168PA-328-328P_datasheet_Complete.pdf) confirmed this. The datasheet allowed us to disambiguate this line and determine that the ADC clock prescalar is adjusted by this script before the FFT is run.
 
 ![Fig. 4: ADCSRA](images/adcsra.png)
 
 ![Fig. 5: ADPS](images/adps.png)
 
-The final 3 bits of ADCSRA are ADPS2, ADPS1, and ADPS0. These three bits determine the prescalar by which the main clock, running at 16MHz, is divided to get the ADC clock. 0xe5 is hexidecimal for 11100101, so the final 3 bits are 101. According to this table from the datasheet, that gives a prescalar of 32, not the default of 128! This means the ADC clock is running at 500kHz, explaining our FFT output.
+The final 3 bits of ADCSRA are ADPS2, ADPS1, and ADPS0. These three bits determine the prescalar by which the main clock, running at 16MHz, is divided to get the ADC clock. 0xe5 is hexidecimal for 11100101, so the final 3 bits are 101. According to this table taken from the datasheet, that gives a prescalar of 32, not the default of 128! This means the ADC clock is running at 500kHz, explaining our FFT output.
 
 Note that the datasheet also indicates that running the ADC clock this fast will lower precision: "By default, the successive approximation circuitry requires an input clock frequency between 50kHz and 200kHz to get maximum resolution. If a lower resolution than 10 bits is needed, the input clock frequency to the ADC can be higher than 200kHz to get a higher sample rate." (page 240)
 
-However, we appear to get decent results from our script, so should the robot challenge require us to do more precise FFT processing, this approach might be a good option.
-
 ### analogRead(): fft_analogread
 
-We modified the fft_adc_serial script to use analogRead() instead of running the ADC in free-running mode.
+We modified the fft_adc_serial script to use analogRead(), the built-in method for reading an analog input, instead of running the ADC in free-running mode.
 
 ```C
 void setup() {
@@ -132,14 +125,14 @@ We ran the same tests using our function generator and got a much different outp
 
 ![Fig. 6: fft_analogread results](images/fft_analogread.png)
 
-The peak for each frequency appears in the following bins:
-660: 20
-1320: 39
-1980: 58
-2640: 77
-3300: 96
+The peak for each frequency appears in the following bins:  
+660: 20  
+1320: 39  
+1980: 58  
+2640: 77  
+3300: 96  
 
-Obviously the sampling frequency is much lower when using analogRead(). Arduino makes available a script called [ShowInfo](https://playground.arduino.cc/Main/ShowInfo) that contains a speed test option that gives the time taken to do an analogRead().
+Obviously the sampling frequency is much lower when using analogRead() compared to free running mode. Arduino makes available a script called [ShowInfo](https://playground.arduino.cc/Main/ShowInfo) that provides a speed test that gives the time taken to do an analogRead().
 
 The results for our Arduino look like:
 ```
@@ -182,4 +175,31 @@ Interrupts are still enabled, because millis() is used for timing
 -----------
 ```
 
-analogRead() takes 111.987us, giving a sampling frequency of 1 / 0.000111987 = ~8930Hz. 8930Hz / 256 = 34.9Hz. This means our bins are off by ~15Hz. This could be because of variance in the time taken to conduct analogRead() or because FFT algorithm has limited precision.
+analogRead() takes 111.987us, giving a sampling frequency of 1 / 0.000111987 = ~8930Hz. 8930Hz / 256 = 34.9Hz. This means our bins are sensible, but off by ~15Hz. This could be because of variance in the time taken to run analogRead() or because FFT algorithm has limited precision.
+
+### Tone generation
+We found a nice [web application to generate a tone](http://www.szynalski.com/tone-generator).
+
+![Tone generator](images/tone_generator.png)
+
+### Microphone
+
+We assembled our microphone with an analog filter and amplifier. Experiments generating tones using the web app and showing the results on the oscilloscope showed this working as expected.
+
+![Microphone with amp](images/mic_with_amp.jpg)
+
+![Amp diagram](images/amp_diagram.jpg)
+
+Connecting the microphone signal to pin A0 on our Arduino and playing a 660Hz signal very close to the microphone gave us the expected spike in bin 5 (using the fft_adc_serial script).
+
+### Treasure
+
+![IR sensor with amp](images/ir_with_amp.jpg)
+
+**TODO:** Insert details on the amplifier circuit.
+
+We checked the frequency set on our treasure using the oscilloscope.
+
+We connected the IR signal to pin A0 on our Arduino and moved the treasure near to the IR sensor. Because of the nature of our amplifier, producing a square wave, we expect to see harmonics on our FFT output. Our result shows these harmonics, with the fundamental of 21100Hz (the frequency to which we set the treasure) having the highest spike:
+
+![IR fft](images/ir_fft.jpg)
