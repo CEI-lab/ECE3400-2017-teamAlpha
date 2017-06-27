@@ -1,11 +1,19 @@
-# Lab 2
+# Lab 2: Analog Circuitry and FFTs
 ## Team Alpha
 
 ### Goals:
+- Get a Fast Fourier Transform algorithm running on the Arduino.
+- Understand the Open Music Lab FFT library versus a naive library written using analogRead().
+
 - Capture a 660Hz tone using the Electret microphone.
 - Amplify the signal if necessary.
 - Process the signal using a Fast Fourier Transform running on the Arduino.
 - Show the expected spike in the FFT bin in the output containing 660Hz.
+
+- Capture IR pulses from the treasure.
+- Amplify the signal if necessary.
+- Process the signal using a Fast Fourier Transform running on the Arduino.
+- Show the expected spike in the FFT bin in the output containing the frequency set on the treasure.
 
 ### Tone generation
 We found a nice [web application to generate a tone](http://www.szynalski.com/tone-generator).
@@ -13,17 +21,17 @@ We found a nice [web application to generate a tone](http://www.szynalski.com/to
 ![Tone generator](images/tone_generator.png)
 
 ### Timing ADC capture: analogRead() versus Free Running Mode
-The accuracy of our FFT depends on the sampling frequency of our computation, Fs. Fs is determined by several factors:
+The accuracy of our FFT depends on the sampling frequency of our computation, *Fs*. Fs is determined by several factors:
 - The clock speed of the Arduino. 16MHz is the default, but this can be modified.
-- The clock speed of the ADC. This is factor of the clock speed of the Arduino which can be modified. The ADC clock is determined by a the main clock speed divided by a prescalar, which must be a power of 2.
+- The clock speed of the ADC. This is a factor of the clock speed of the Arduino. The ADC clock is determined as the Arduino clock speed divided by a prescalar, which must be a power of 2.
 - The number of bits captured by the ADC. The ADC grabs data off the wire in a step called a "conversion". A conversion takes more than one clock cycle. In the case of the specific Atmel chip used in this course (aka the Arduino) and its 10-bit ADC, a conversion takes 13 clock cycles.
 
-The default configuration for the ADC clock is 125kHz. At conversion takes 13 clock cycles. Therefore the maximum sampling frequency is 125000 / 13 = ~9600Hz.
+The default configuration for the ADC clock is 125kHz. At conversion takes 13 clock cycles. Therefore the maximum sampling frequency is 125000 / 13 = **~9600Hz**.
 
 ### Free Running Mode: fft_adc_serial
-The lab asked us to download the Open Music Lab FFT library. We installed this to our Arduino idea.
+The lab asked us to download the Open Music Lab FFT library. We installed this to our Arduino IDE.
 
-We started by running the example script fft_adc_serial. Before jumping to sampling data from the microphone, we first tested this script using the function generator present in the lab.
+We started by running the example script *fft_adc_serial*. Before jumping to sampling data from the microphone, we first tested this script using the function generator in the lab.
 
 We set the generator to 660Hz, 1.65Vpp (3.3V/2), with a 0.825V offset (1.65V/2). These setting were confirmed using the oscilloscope.
 
@@ -31,17 +39,18 @@ We set the generator to 660Hz, 1.65Vpp (3.3V/2), with a 0.825V offset (1.65V/2).
 
 ![Fig. 2: Oscilloscope](images/scope.jpg)
 
-We captured data using the fft_adc_serial script that comes with the Open Music Lab FFT library.
+We then captured data using the fft_adc_serial script.
 
 This script is set to collect 256 samples for each run of the FFT. Running at a sampling frequency of 9600Hz, this gives us 9600 / 256 = 37.5Hz per bin in our FFT. 660Hz / 37.5Hz = 17.6. So we expect to see the peak for our 660Hz input to appear in the 17th bin in our output.
 
 However, with an input of 660Hz we found an unusual result: the peak for the 660Hz tone appears in the 5th bin in our output.
 
-One reason to use the function generator to create our input is that it makes changes that input simple. So we gathered samples for integer multiples of 660Hz, first to investigate if the FFT algorithm is behaving sensibly at all (do the peaks appear in bins numbered with integer multiples of 5?) and second to get an idea of what the sample frequency, Fs, might be to produce this result.
+One reason to use the function generator to create our input is that it makes changing that input simple. We gathered samples for integer multiples of 660Hz, first to investigate if the FFT algorithm is behaving sensibly at all (do the peaks appear in bins numbered with integer multiples of 5?) and second to get an idea of what the sample frequency, Fs, might be to produce this result.
 
 ![Fig. 3: fft_adc_serial results](images/fft_adc_serial.png)
 
 The peak for each frequency appears in the following bins:
+```
 660: 5
 1320: 10
 1980: 14
@@ -52,24 +61,25 @@ The peak for each frequency appears in the following bins:
 5280: 36
 10560: 71
 21120: 116
+```
 
 As you can see from the graph of our output, the FFT algorithm is behaving sensibly. The integer multiples of 660Hz appear in equally spaced bins. Strangely, we are able to detect much higher frequencies than expected. According to the Nyquist sampling frequency, the highest frequency we should be able to detect is Fs/2. Yet, we can correctly discern frequencies far above 9600Hz/2.
 
-These data suggest that we are sampling over 40kHz. This makes sense with 660Hz appearing in the 5th bin, as 40000Hz / 256 = 156Hz. 5 * 156Hz = 780. Well 780 - 156 = 624Hz, so with this sampling frequency, 660Hz would indeed appear in the 5th bucket.
+These data suggest that we are sampling at over 40kHz. This makes sense with 660Hz appearing in the 5th bin, as 40000Hz / 256 = 156Hz. 5 * 156Hz = 780. 780 - 156 = 624Hz, so with this sampling frequency, 660Hz would indeed appear in the 5th bucket.
 
 However, remembering that the ADC clock is set by the main clock speed divided by a power of 2, there are only a few options for the sampling frequency.
-16000000 / 128 = 125kHz
-125kHz / 13 = ~9600Hz
+16000000 / 128 = 125kHz  
+125kHz / 13 = ~9600Hz  
 
-16000000 / 64 = 250kHz
-250kHz / 13 = ~19000Hz
+16000000 / 64 = 250kHz  
+250kHz / 13 = ~19000Hz  
 
-16000000 / 32 = 500kHz
-500kHz / 13 = ~38kHz
+16000000 / 32 = 500kHz  
+500kHz / 13 = ~38kHz  
 
-38kHz / 256 = 148.4Hz per bin in our FFT. This matches up well with our results. Knowing this, we have strong reason to suspect that the default settings for the ADC clock are being modified somewhere by our FFT library or the the script we are running.
+38kHz / 256 = 148.4Hz per bin in our FFT. This matches up well with our results. Knowing this, we have strong reason to suspect that the default settings for the ADC clock are being modified somewhere by our FFT library or by the script we are running.
 
-Looking more closely at the fft_adc_serial script, there is an obvious suspect:
+Looking more closely at the fft_adc_serial script, there is an obvious suspect line:
 
 ``` C
 void setup() {
