@@ -2,18 +2,11 @@
 ## Team Alpha
 
 ### Goals:
-- Get a Fast Fourier Transform algorithm running on the Arduino.
-- Understand the Open Music Lab FFT library versus a naive library written using analogRead().
+- Get the Open Music alb Fast Fourier Transform algorithm running on the Arduino. Understand how the Open Music Lab FFT library interacts with the ADC versus using analogRead().
 
-- Capture a 660Hz tone using the Electret microphone.
-- Amplify the signal if necessary.
-- Process the signal using a Fast Fourier Transform running on the Arduino.
-- Show the expected spike in the FFT bin in the output containing 660Hz.
+- Capture a 660Hz tone using the Electret microphone. Amplify the signal if necessary. Show the expected spike in the FFT bin containing 660Hz.
 
-- Capture IR pulses from the treasure.
-- Amplify the signal if necessary.
-- Process the signal using a Fast Fourier Transform running on the Arduino.
-- Show the expected spike in the FFT bin in the output containing the frequency set on the treasure.
+- Capture IR pulses from the treasure. Amplify the signal if necessary. Show the expected spike in the FFT output matching the frequency set on the treasure.
 
 ### Tone generation
 We found a nice [web application to generate a tone](http://www.szynalski.com/tone-generator).
