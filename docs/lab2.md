@@ -206,6 +206,3 @@ To find the frequency of the blinking treasure, we connected the output of the p
 
 ![Treasure FFT](images/lab2_treasure_fft.png)
 
-Because of the nature of our amplifier, producing a square wave, we expect to see harmonics on our FFT output. Our result shows these harmonics, with the fundamental of 21100Hz (the frequency to which we set the treasure) having the highest spike: 
-
-![IR fft](images/ir_fft.png)
