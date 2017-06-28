@@ -196,7 +196,7 @@ Connecting the microphone signal to pin A0 on our Arduino and playing a 660Hz si
 
 We use a phototransistor to detect the IR LED treasure with the simple circuit below. Under light, a phototransistor lets current pass - like a closed switch. In darkeness, it lets less current pass - like a closed switch. Using the circuit below, we saw a higher output voltage when we covered the phototransistor and a lower output voltage when we exposed the phototransistor to light. The change in voltage you we saw at the output was small (less than 1 V), but this was still enough for the FFT to work on the unamplified signal. 
 
-![Phototransistor circuit](images/lab2_phototransistor_circuit.png)
+![Phototransistor circuit](images/lab2_phototransistor_schem.png)
 
 This is the output of the circuit when we held a transmitting treasure close to the phototransistor. To confirm the frequency, we also checked the frequency set on our treasure by directly probing the IR LED.
 
