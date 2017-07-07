@@ -139,7 +139,7 @@ while (~stack.isempty)
     % Make current position previous position
     prev_r = curr_r;
     prev_c = curr_c;
-    % Save prev pos in maze arra
+    % Save prev pos in maze array
     curr_loc(prev_r, prev_c) = 0.5;
     
     % Check if all nodes have been visited
