@@ -1,44 +1,57 @@
-currloc_init = [...
+% Initialize current location maze array
+curr_loc = [...
     1 1 1 1
     1 1 1 1
     1 1 1 1
     1 1 1 1
     1 1 1 0];
 
+visited_info = zeros(5,4);
+
+% Set maze walls: W E S N (ie. walls on N W would = 9)
 wall_loc = [...
     9 1 3 5
     8 0 1 4
     8 0 0 4
-    8 0 0 4
-    10 2 2 6];
+    8 0 2 4
+    10 2 3 6];
 
-imshow(currloc_init, 'InitialMagnification', 'fit');
+% Draw initial grid 
+imshow(curr_loc, 'InitialMagnification', 'fit');
+draw_walls(wall_loc);
 
-[num_row, num_col] = size(wall_loc);
+% Starting position
+start_pos = [5,4];
 
-for r = 1:num_row
-   for c = 1:num_col
-      if (wall_loc(r,c) ~= 0)
-          wall_bin = de2bi(wall_loc(r,c), 4, 'right-msb');
-          if (wall_bin(1) == 1) % NORTH wall
-              line([c-0.5,c+0.5],[r-0.5,r-0.5],'color','r','linewidth', 3); 
-          end
-          if (wall_bin(2) == 1) % SOUTH wall
-              line([c-0.5,c+0.5],[r+0.5,r+0.5],'color','r','linewidth', 3); 
-          end
-          if (wall_bin(3) == 1) % EAST wall 
-              line([c+0.5,c+0.5],[r-0.5,r+0.5],'color','r','linewidth', 3); 
-          end
-          if (wall_bin(4) == 1) % WEST wall
-              line([c-0.5,c-0.5],[r-0.5,r+0.5],'color','r','linewidth', 3); 
-          end
-      else
-          line([c-0.5,c+0.5],[r-0.5,r-0.5],'color','b','linestyle', '--'); 
-          line([c-0.5,c+0.5],[r-0.5,r-0.5],'color','b','linestyle', '--'); 
-          line([c-0.5,c+0.5],[r-0.5,r-0.5],'color','b','linestyle', '--'); 
-          line([c-0.5,c+0.5],[r-0.5,r-0.5],'color','b','linestyle', '--'); 
-      end  
-   end
-end
- 
+% Create stack
+stack = CStack();
+
+% DFS traverse through maze
+% First, push starting position onto stack;
+stack.push(start_pos);
+
+%while (~stack.isempty)
+
+    % Visit next pos and mark it as visited
+    curr_pos = stack.top();
+    curr_r = curr_pos(1);
+    curr_c = curr_pos(2);
+    curr_loc(curr_r, curr_c) = 0;
+    visited_info(curr_r, curr_c) = 1; 
+   
+    % Look for next position to visit
+    % First get wall information at current location
+    wall_bin = de2bi(wall_loc(curr_r,curr_c), 4, 'right-msb'); % [N S E W]
+    % Next, figure out next position to be visited by: 
+    % wall location and if they already have been visited
+    % Priority: N, E, W, S
+    go_north = (~wall_bin(1) & ~visited_info(curr_r - 1, curr_c));
+    go_east  = (~wall_bin(3) & ~visited_info(curr_r, curr_c + 1) & ~go_north);
+    go_west  = (~wall_bin(4) & ~visited_info(curr_r, curr_c - 1) & ~go_east);
+    go_south = 
+%end
+
+pause(1)
+imshow(curr_loc, 'InitialMagnification', 'fit');
+draw_walls(wall_loc)
  
