@@ -1,40 +1,82 @@
+%% Milestone 3: Maze mapping simulation for ECE3400, Fall 2017
+%  Implements a baseline depth-first-search navigation algorithm
+%  Written by ECE3400 staff
+%% Maze initializations
+
 % Initialize current location maze array
+% 1 means unvisited
+% 0.5 means visited
+% 0 is the robot's current location
+
 curr_loc = [...
     1 1 1 1
     1 1 1 1
     1 1 1 1
     1 1 1 1
-    1 1 1 0];
+    1 1 1 1];
 
+% Initialize array that keeps track of which grid spaces have been visited
 visited_info = zeros(5,4);
 
-% Set maze walls: W E S N (ie. walls on N W would = 9)
+% Set maze walls
+% For each grid space, wall locations are represented with 4 bits:
+% [bit3 bit2 bit1 bit0] ==> [W E S N]
+% N (north wall) = 0001 in binary or 1 in decimal
+% S (south wall) = 0010 in binary or 2 in decimal
+% E (east wall)  = 0100 in binary or 4 in decimal
+% W (west wall)  = 1000 in binary or 8 in decimal
+% For example: A grid that has a wall to the north and east would have a
+% wall location of 0101 in binary or 5 in decimal
+
+% Some various wall configurations, for testing
+% You can uncomment any of the wall_loc arrays or write your own mazes
+
+% wall_loc = [...
+%     9 1 3 5
+%     8 4 11 4
+%     12 10 5 12
+%     8 5 14 12
+%     10 2 3 6];
+
+% wall_loc = [...
+%     9 3 3 5
+%     12 1 4 12
+%     12 8 4 12
+%     12 10 6 12
+%     10 3 3 6];
+
 wall_loc = [...
-    9 3 3 5
-    12 9 5 12
-    12 0 0 12
-    12 0 2 12
-    10 3 3 6];
+    9 1 3 5
+    8 6 13 12
+    12 11 6 12
+    8 3 7 14
+    10 3 3 7];
 
-% Draw initial grid 
-
-%imshow(curr_loc, 'InitialMagnification', 'fit');
+% Draw initial grid
 colormap spring;
 imagesc(curr_loc);
+caxis([0 1])
 draw_walls(wall_loc);
 
-% Starting position
-start_pos = [5,4];
+%% Navigation 
 
 % Create stack
 stack = CStack();
 
+% Starting position
+start_pos = [5,4];
+
+% Total number of steps
+step_num = 0;
+
 % DFS traverse through maze
 % First, push starting position onto stack;
 stack.push(start_pos);
+
 all_visited = all(all(visited_info,1));
 while (~stack.isempty)
-
+    step_num = step_num + 1;
+    
     % Visit next pos and mark it as visited
     curr_pos = stack.top();
     curr_r = curr_pos(1);
@@ -89,21 +131,28 @@ while (~stack.isempty)
     end
 
     pause(1)
-    %imshow(curr_loc, 'InitialMagnification', 'fit');
+
     imagesc(curr_loc);
-    draw_walls(wall_loc)
-    
-    % Check if all nodes have been visited
-    all_visited = all(all(visited_info,1));
+    caxis([0 1]); % Re-scale colormap to original scale
+    draw_walls(wall_loc);
     
     % Make current position previous position
     prev_r = curr_r;
     prev_c = curr_c;
     % Save prev pos in maze arra
     curr_loc(prev_r, prev_c) = 0.5;
+    
+    % Check if all nodes have been visited
+    % If they have, stop traversing through maze
+    all_visited = all(all(visited_info,1));
+    if (all_visited)
+        break;
+    end
+    
 end
 
 display('done!');
+display(step_num);
 
 
  
