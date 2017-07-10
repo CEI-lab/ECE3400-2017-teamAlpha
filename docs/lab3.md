@@ -1,3 +1,7 @@
+<head>
+<script src="http://api.html5media.info/1.1.8/html5media.min.js"></script>
+</head>
+
 # Lab 3: Digital Logic
 ## Team Alpha, ECE 3400, Fall 2017
 
