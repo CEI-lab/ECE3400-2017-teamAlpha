@@ -219,7 +219,7 @@ To generate the output for a triangle wave of 440Hz, we incremented and decremen
 <a href="/lab3/Triangle440.wav">Play Sound</a>
 <audio src="/lab3/Triangle440.wav" autoplay></audio>
 
-<audio controls="controls">
+<audio controls>
   <source type="audio/wav" src="/lab3/Triangle440.wav"></source>
   <p>Your browser does not support the audio element.</p>
 </audio>
