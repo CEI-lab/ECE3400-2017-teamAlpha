@@ -217,6 +217,7 @@ To generate the output for a triangle wave of 440Hz, we incremented and decremen
 <img src="/docs/images/lab3_triangle440.png" alt="440Hz triangle wave" width="455" height="350"> 
 
 <a href="/lab3/Triangle440.wav">Play Sound</a>
+<audio src="/lab3/Triangle440.wav" autoplay></audio>
 
 ```verilog
   reg  [7:0] tri_value;       // 8-bit wave-output counter        
