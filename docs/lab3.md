@@ -219,6 +219,11 @@ To generate the output for a triangle wave of 440Hz, we incremented and decremen
 
 <a href="/lab3/Triangle440.wav">Play Sound</a>
 
+<audio
+  src="https://github.com/KirstinHP/ECE3400-2017-teamAlpha/blob/master/lab3/Triangle440.wav"
+  autoplay>
+  Your browser does not support the <code>audio</code> element.
+</audio>
 
 ```verilog
   reg  [7:0] tri_value;       // 8-bit wave-output counter        
