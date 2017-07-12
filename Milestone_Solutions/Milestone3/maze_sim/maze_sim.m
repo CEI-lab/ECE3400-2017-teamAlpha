@@ -53,7 +53,12 @@ wall_loc = [...
     10 3 3 7];
 
 % Draw initial grid
-colormap spring;
+map = [...
+       0, 0, 0 
+       0, 1, 0
+       1, 1, 1];
+       
+colormap(map);
 imagesc(curr_loc);
 caxis([0 1])
 draw_walls(wall_loc);
@@ -74,10 +79,10 @@ step_num = 0;
 stack.push(start_pos);
 
 all_visited = all(all(visited_info,1));
-while (~stack.isempty)
+while (~stack.isempty || all_visited)
     step_num = step_num + 1;
     
-    % Visit next pos and mark it as visited
+    % Visit next pos and  mark it as visited
     curr_pos = stack.top();
     curr_r = curr_pos(1);
     curr_c = curr_pos(2);
@@ -88,8 +93,10 @@ while (~stack.isempty)
     % First get wall information at current location
     wall_bin = de2bi(wall_loc(curr_r,curr_c), 4, 'right-msb'); % [N S E W]
     % Next, figure out next position to be visited by: 
-    % wall location and if they already have been visited
+    % wall location and if they a lready have been visited
     % Priority: N, E, W, S
+    % Don't have to check for index out of bounds errors because existence
+    % of walls are always checked first
     if (wall_bin(1) == 0)
         go_north = ~visited_info(curr_r - 1, curr_c);
     else
@@ -105,7 +112,7 @@ while (~stack.isempty)
     if (wall_bin(4) == 0)
         go_west  = (~visited_info(curr_r, curr_c - 1) & ~go_east);
     else
-        go_west = 0;
+        go_west = 0; 
     end
    
     if (wall_bin(2) == 0) 
@@ -130,7 +137,7 @@ while (~stack.isempty)
         next_pos = stack.pop;
     end
 
-    pause(1)
+    pause(0.5)
 
     imagesc(curr_loc);
     caxis([0 1]); % Re-scale colormap to original scale
@@ -145,10 +152,7 @@ while (~stack.isempty)
     % Check if all nodes have been visited
     % If they have, stop traversing through maze
     all_visited = all(all(visited_info,1));
-    if (all_visited)
-        break;
-    end
-    
+
 end
 
 display('done!');
