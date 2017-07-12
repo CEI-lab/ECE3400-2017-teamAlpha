@@ -1,3 +1,4 @@
+
 # Lab 3: Digital Logic
 ## Team Alpha, ECE 3400, Fall 2017
 
@@ -215,6 +216,8 @@ We were able to generate a tone using a simple square wave, but for more pleasan
 To generate the output for a triangle wave of 440Hz, we incremented and decremented an 8-bit counter (from 0 to 255) every 110 cycles. Using the same line of thinking as for the square wave, we knew that we wanted one cycle of our wave to go from 0 to 255 to 0 in 56818 25MHz clock cycles. From here, we reasoned that the counter must increment or decrement every 110 cycles in order to go from 0 to 255 to 0 in the desired number of clock cycles. Below is a picture of our generated triangle wave, as well as the state machine to increment the counter.
 
 <img src="/docs/images/lab3_triangle440.png" alt="440Hz triangle wave" width="455" height="350"> 
+
+<a href="/lab3/Triangle440.wav">Play Sound</a>
 
 ```verilog
   reg  [7:0] tri_value;       // 8-bit wave-output counter        
