@@ -44,18 +44,20 @@ void loop() {
     sei();
     Serial.println("start");
     for (byte i = 0 ; i < FFT_N/2 ; i++) { 
-      if(fft_log_out[i] > peak_val){
-        peak_val = fft_log_out[i];
-        peak_bin = i;
+      if (i > 2) {
+        if(fft_log_out[i] > peak_val){
+          peak_val = fft_log_out[i];
+          peak_bin = i;
+        }
       }
       //Serial.print(i);
       //Serial.print(": ");
-      Serial.println(fft_log_out[i]); // send out the data
+      //Serial.println(fft_log_out[i]); // send out the data
     }
 
  
-    //Serial.print("peak bin: ");
-    //Serial.println(peak_bin);
-    //Serial.println();
+    Serial.print("peak bin: ");
+    Serial.println(peak_bin);
+    Serial.println();
   }
 }
