@@ -1,6 +1,6 @@
 %% Milestone 3: Maze mapping simulation for ECE3400, Fall 2017
 %  Implements a baseline depth-first-search navigation algorithm
-%  Written by ECE3400 staff
+%  Written by Claire Chen for EC3400  
 %% Maze initializations
 
 % Initialize current location maze array
@@ -9,11 +9,11 @@
 % 0 is the robot's current location
 
 curr_loc = [...
+    1 1 1 1 
     1 1 1 1
     1 1 1 1
-    1 1 1 1
-    1 1 1 1
-    1 1 1 1];
+    1 1 1 1 
+    1 1 1 1];  
 
 % Initialize array that keeps track of which grid spaces have been visited
 visited_info = zeros(5,4);
