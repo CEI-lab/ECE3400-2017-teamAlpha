@@ -7,7 +7,7 @@ We used the standard depth-first search (DFS) algorithm to navigate the maze. Th
 
 We first wrote a Matlab simulation to test our algorithm. This allowed us to see the efficiency of the algorithm for various maze configurations and make any changes we wanted to. We needed a stack for DFS, so we found a stack implementation in Matlab's file exhange, [here][https://www.mathworks.com/matlabcentral/fileexchange/28922-list--queue--stack?focused=5187765&tab=function]. 
 
-The following code displays an image of a 4x5 maze grid with a user-defined wall configuration and the robot in its starting position. The robot's position is stored in an array called curr_loc. This array will also hold information about which grid spaces have already been visited. the wall information for each grid space is stored in an array called wall_loc. Finally, we've written a color-map, which allows us to determine what colors each value in our curr_loc array map to when it is displayed as an image. Matlab also has pre-defined color-maps.
+The following code displays an image of a 4x5 maze grid with a user-defined wall configuration and the robot in its starting position. The robot's position is stored in an array called *curr_loc*. This array will also hold information about which grid spaces have already been visited. the wall information for each grid space is stored in an array called *wall_loc*. Finally, we've written a color-map, which allows us to determine what colors each value in our curr_loc array map to when it is displayed as an image. Matlab also has pre-defined color-maps.
 
 ```matlab
 % Initialize current location maze array
@@ -65,7 +65,7 @@ caxis([0 1])
 draw_walls(wall_loc);
 ```
 
-The walls are dispalyed on the image using the function draw_walls. The function takes an array and draws north, south, west, and east walls. The code snipppet below draws north walls on every grid space that has a north wall (as defined by the input array wall_loc).
+The walls are dispalyed on the image using the function *draw_walls*. The function takes an array and draws north, south, west, and east walls. The code snipppet below draws north walls on every grid space that has a north wall (as defined by the input array wall_loc).
 
 ```matlab
 [num_row, num_col] = size(wall_loc);
@@ -82,7 +82,7 @@ The walls are dispalyed on the image using the function draw_walls. The function
         end
     end
 ```
-At each step of our navigation algorithm, we update the robot's current and previous location is curr_loc and display this new array every 0.5 seconds. The Matlab script can be paused for n seconds using the function pause(n).
+At each step of our navigation algorithm, we update the robot's current and previous location is curr_loc and display this new array every 0.5 seconds. The Matlab script can be paused for *n* seconds using the function *pause(n)*.
 
 Note: We implemented a very baseline algorithm. You'll see that the robot traverses the maze very inefficiently, especially when there are unvisitable area; The robot has to return to its starting position to know if it has visited all unblocked grid spaces. There are many improvements you can make to this algorithm to make it as efficient as possible!
 

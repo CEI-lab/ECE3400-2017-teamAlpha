@@ -50,7 +50,7 @@ int   servo_turn_delays [] = {300, 0, 300, 900};
 
 // Mux pins
 const int selectPins[3] = {8, 2, 4}; // Mux select signals S0~8, S1~2, S2~4
-const int zInput        = A0;        // Connect common (Z) to A4 (analog input)
+const int zInput        = A0;        // Connect common (Z) to A0 (analog input)
 
 /* 
  * Read analog value from mux 
