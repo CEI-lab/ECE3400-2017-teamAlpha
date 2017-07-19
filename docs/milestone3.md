@@ -84,15 +84,15 @@ The walls are dispalyed on the image using the function *draw_walls*. The functi
 ```
 At each step of our navigation algorithm, we update the robot's current and previous location is curr_loc and display this new array every 0.5 seconds. The Matlab script can be paused for *n* seconds using the function *pause(n)*.
 
-Note: We implemented a very baseline algorithm. You'll see that the robot traverses the maze very inefficiently, especially when there are unvisitable area; The robot has to return to its starting position to know if it has visited all unblocked grid spaces. There are many improvements you can make to this algorithm to make it as efficient as possible!
+The video below shows our simulation.
+
+Note: We implemented a very baseline algorithm. You'll see that the robot traverses the maze very inefficiently, especially when there are unvisitable areas; The robot has to return to its starting position to know if it has visited all unblocked grid spaces. There are many improvements you can make to this algorithm to make it as efficient as possible!
 
 [![Matlab simulation](http://img.youtube.com/vi/D2ZzObOqn5M/0.jpg)](http://www.youtube.com/watch?v=D2ZzObOqn5M)
 
 ### Real-time maze mapping
 
-Once we were happy with our algorithm in simulation, we worked on implementing real-time navigation using that algorithm. We were able to use our line-following/turning code from Milestone 1. We also needed to be able to read the locations of front, left, and right walls at every intersection. For wall detection, it was very important to translate the relative wall locations (front, left, right of the robot) into global wall locations (north, south, east, and west of the maze). In our code, you'll see that the navigation algorithm is the same as the algorithm in the Matlab simulation, with some additional support for getting wall information and moving the robot. Below is a video of the robot traversing a maze with the same wall configuration as in the simulation video above.
+Once we were happy with our algorithm in simulation, we worked on implementing real-time navigation using that algorithm. We were able to use our line-following/turning code from Milestone 1. We also needed to be able to read the locations of front, left, and right walls at every intersection. For wall detection, it was very important to translate the relative wall locations (front, left, right of the robot) into global wall locations (north, south, east, and west of the maze). The navigation algorithm our robot uses to traverse the maze is the same as the algorithm in the Matlab simulation, with some additional support for getting wall information and moving the robot. Below is a video of the robot traversing a maze with the same wall configuration as in the simulation video above.
 
-[![Real time navigation]](http://img.youtube.com/vi/tvfH1x9lJSg/0.jpg)](http://www.youtube.com/watch?v=tvfH1x9lJSg)
+[![Real time navigation](http://img.youtube.com/vi/tvfH1x9lJSg/0.jpg)](http://www.youtube.com/watch?v=tvfH1x9lJSg)
 
-
-**Insert video here** 
