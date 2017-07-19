@@ -31,7 +31,7 @@ Serial.print("Alpha team!");  //Send text
 Serial.println("");           //Carriage return
 ```
 
-![ArduinoComm](/images/ArduinoComm.png)
+![ArduinoComm](images/ArduinoComm.png)
 
 Fifth, we read an analog input from a potentiometer connected to A0, and used it to control the brightness of the LED:
 
@@ -54,8 +54,7 @@ myservo.write(0);   //0 is full speed reverse, 90 no speed, 180 full speed ahead
 
 Finally, we assembled our robot and made it drive in a (sorta) square. Clearly we need to tune the motor values better, and start relying on sensors to track the black lines in the future!
 
-<img src="/docs/images/Assembly.jpg" alt="Robot parts" width="530" height="300">
-
+![AssembledRobot](images/Assembly.jpg)
 [![RobotDrivingInaSquare](images/thumbnail_square.jpg)](https://youtu.be/L83JydJF4H8)
 
 _Helpful links:_
