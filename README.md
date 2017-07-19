@@ -12,6 +12,8 @@ This website contains useful links, our (simple) solutions to the labs, and our 
 * [Milestone 3](./docs/milestone3.md)
 * [Milestone 4](./docs/milestone4.md)
 
+Add pretty photo!
+
 
 
 
