@@ -96,5 +96,3 @@ Once we were happy with our algorithm in simulation, we worked on implementing r
 
 [![Real time navigation](http://img.youtube.com/vi/tvfH1x9lJSg/0.jpg)](http://www.youtube.com/watch?v=tvfH1x9lJSg)
 
-
-**Insert video here** 
