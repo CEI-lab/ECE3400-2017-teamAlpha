@@ -370,27 +370,6 @@ void turn_right() { // only turn, do not go
   orientation = my_shift_left(orientation);
 }
 
-/*
-// This function is only valid for reading wall info from maze_cheatsheet, when we are only testing and hardcode the walls into 
-// maze_cheatsheet. Therefore, IT DOES NOT REALLY READ THE WALL SENSORS READINGS!
-int get_wall_info() {
-  // TODO: API
-  int curx = getx(cur_pos);
-  int cury = gety(cur_pos);
-  if (orientation == NORTH) {
-    return maze_cheatsheet[curx][cury] | 4; // 4: 0100, cannot sense the south, according to the protocol, just assume there is a wall back
-  }
-  if (orientation == EAST) {
-    return my_shift_right(maze_cheatsheet[curx][cury] | 8); // 8: 1000, cannot sense the west (facing east), just assume there is a wall east
-  }
-  if (orientation == SOUTH) {
-    return my_shift_right(my_shift_right(maze_cheatsheet[curx][cury] | 1)); // 1: 0001, the same drill
-  }
-  if (orientation == WEST) {
-    return my_shift_left(maze_cheatsheet[curx][cury] | 2); // 2: 0010, the same drill
-  }
-  else return NULL;
-}*/
 
 void update_maze(int curr_wall_info) { // update the maze with wall sensors readings
   int curr_int = curr_wall_info;
@@ -420,6 +399,7 @@ void update_maze(int curr_wall_info) { // update the maze with wall sensors read
   }
 }
 
+
 // Correct the orientatioin to the target orientation BY calling turn_left or turn_right. 
 // However, the line following section did not provide these two APIs, so this function should NO LONGER WORKs,
 // and thus gave up on using this function.
@@ -441,20 +421,6 @@ void printmaze() {
   }
   ////Serial.println("---------------------");
 }
-
-/*
-void print_stack() { // print the stack in a pretty format.
-  if (stack_empty()) {
-    //cout << "stack is empty!" << endl;
-    return ;
-  }
-  for (int i = stack_ptr - 1; i >= 0; i--) {
-    if (stack[i] < 10) //cout << "| " << " " << stack[i] << " |" << endl;
-    else //cout << "| " << stack[i] << " |" << endl;
-    //cout << "|----|" << endl;
-  }
-}
-*/
 
 // from and to should ONLY be ONE block away!
 void move_one(int& from, int& to) { 
@@ -545,12 +511,6 @@ bool wallEast = 0;
     wallSouth = maze[xPos][yPos] & 0x04;
     wallWest = maze[xPos][yPos] & 0x08;
     wallEast = maze[xPos][yPos] & 0x02;
-    // treasure = (wallsRadio >> 3); // get treasure info from what robot saw
-
-    // TODO: Test/figureout
-//    finished = (stack_ptr == 0);
-    //finished = ((cur_pos  == nex_pos) && (cur_pos != 19));
-
 
     info[1] = 0;
     info[0] = (((xPos << 4) & 0xF0) | (yPos & 0x0F));
@@ -1075,8 +1035,6 @@ void loop() {
   // put your main code here, to run repeatedly:
   initialize();
   
-     
-  
    manualOverride =  (analogRead(overridePin) > 500);
    while(!whistle && !manualOverride) { // reduces jitter
       for (int i = 0 ; i < FFT_N*2 ; i += 2) { // save 256 samples
@@ -1136,11 +1094,4 @@ void loop() {
   send_my_radio();
 
 }
-
-/*
-void loop() {
-  delay(500);
-  updateWalls();
-}
-*/
 
