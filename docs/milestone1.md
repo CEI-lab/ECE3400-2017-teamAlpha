@@ -8,7 +8,7 @@ First, we worked on getting the robot to follow a black line on a white backgrou
 
 We used four QRE113 line sensors arranged in the following configuration. As noted in the image, the center two sensors are for keeping the robot on the line it is on, and the two outer sensors are for detecting when the robot has reached an intersection. 
 
-<img src="/docs/images/m1_linesensor.png" alt="Line Sensor Configuration" width="530" height="300">
+![Line sensor configuration](images/m1_linesensor.png)
 
 We needed to connect the sensors to the Arduino via an analog mux since we ran out of analog pins on our final robot. The mux we used has 3 select pins, which are connected to digital pins on the Arduino. The select pins are used the choose from one of the eight analog inputs on the mux. The zInput pin on the mux is connected to an analog pin on the Arduino.
 
