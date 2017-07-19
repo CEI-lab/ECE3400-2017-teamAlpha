@@ -3,16 +3,14 @@
 
 This website contains useful links, our (simple) solutions to the labs, and our final robot. We hope you will find it useful and create much better websites yourselves!
 
-[Lab 1 Microcontrollers](./docs/lab1.md)
-
-# Lab 2 Signal Processing
-
-Buzzer and IR?
-
-# Lab 3 Wireless Communication
-
-[Lab 3 FPGA](./docs/lab3.md)
-
+* [Lab 1 Microcontrollers](./docs/lab1.md)
+* [Lab 2 Signal Processing](./docs/lab2.md)
+* [Lab 3 FPGA](./docs/lab3.md)
+* [Lab 4 Wireless](./docs/lab4.md)
+* [Milestone 1](./docs/milestone1.md)
+* Write up!!
+* [Milestone 3](./docs/milestone3.md)
+* [Milestone 4](./docs/milestone4.md)
 
 
 
