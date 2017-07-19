@@ -21,7 +21,7 @@ digitalWrite(ledPin, HIGH); //Turn on LED
 digitalWrite(ledPin, LOW); //Turn off LED
 ```
 [![Blinky](images/thumbnail_blinky.jpg)](https://youtu.be/tHVKVdAuRxc)
-
+![Blink sketch](docs/images/Blink-sketch.png)
 
 Fourth, we communicated over serial interface:
 
