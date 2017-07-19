@@ -1,4 +1,4 @@
-# Milestone 1: Maze navigation algorithm
+# Milestone 3: Maze navigation algorithm
 ## Team Alpha
 
 We used the standard depth-first search (DFS) algorithm to navigate the maze. The maze can be thought of as a graph, where each grid space on the maze is a node in the graph. Adjacent, unblocked grid spaces on the maze are connected nodes in the graph. 
