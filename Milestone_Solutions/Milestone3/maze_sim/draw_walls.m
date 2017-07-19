@@ -20,11 +20,13 @@ function draw_walls( wall_loc )
         for c = 1:num_col
             wall_bin = de2bi(wall_loc(r,c), 4, 'right-msb');
 
+            % Draw all grid lines in thin dashed black  
             line([c-0.5,c+0.5],[r-0.5,r-0.5],'color','b','linestyle', '--');
             line([c-0.5,c+0.5],[r+0.5,r+0.5],'color','b','linestyle', '--');
             line([c+0.5,c+0.5],[r-0.5,r+0.5],'color','b','linestyle', '--');
             line([c-0.5,c-0.5],[r-0.5,r+0.5],'color','b','linestyle', '--');
 
+            % Draw all walls
             if (wall_bin(1) == 1) % NORTH wall
                 line([c-0.5,c+0.5],[r-0.5,r-0.5],'color','r','linewidth', 3);
             end

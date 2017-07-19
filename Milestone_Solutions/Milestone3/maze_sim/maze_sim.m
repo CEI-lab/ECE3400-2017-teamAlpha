@@ -52,12 +52,16 @@ wall_loc = [...
     8 3 7 14
     10 3 3 7];
 
-% Draw initial grid
+% User-defined color map
+% 0   -> black
+% 0.5 -> green
+% 1   ->
 map = [...
        0, 0, 0 
        0, 1, 0
        1, 1, 1];
-       
+
+% Draw initial grid
 colormap(map);
 imagesc(curr_loc);
 caxis([0 1])
