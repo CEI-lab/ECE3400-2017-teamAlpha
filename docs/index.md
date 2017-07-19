@@ -1,14 +1,15 @@
-## Welcome to ECE3400!
+# ECE 3400, Fall 2017
+## Team Alpha: Claire Chen, Christopher Fedors, Ryan O'Hern, and Kirstin Petersen
 
-Testing images:
-![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
+This website contains useful links, our (simple) solutions to the labs, and our final robot. We hope you will find it useful and create much better websites yourselves!
 
-### Labs
-- [Lab 1](lab1.md)
-- [Lab 2](lab2.md)
-- [Lab 3](lab3.md)
-- [Lab 4](lab4.md)
+* [Lab 1: Microcontrollers](lab1.md)
+* [Lab 2: Signal Processing](lab2.md)
+* [Lab 3: FPGA](./lab3.md)
+* [Lab 4: Wireless](lab4.md) - (Kirstin: Fix wording)
+* [Milestone 1](milestone1.md) 
+* Claire: Write up!!
+* [Milestone 3](milestone3.md)
+* [Milestone 4](milestone4.md)
 
-### Other Documents
-- [Starting on Your Robot](starting_your_robot.md)
-
+Claire: Add pretty photo!
