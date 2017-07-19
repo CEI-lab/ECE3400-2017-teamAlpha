@@ -3,9 +3,9 @@
 
 This website contains useful links, our (simple) solutions to the labs, and our final robot. We hope you will find it useful and create much better websites yourselves!
 
-* [Lab 1: Microcontrollers](./lab1.md)
+* [Lab 1: Microcontrollers](lab1.md)
 * [Lab 2: Signal Processing](lab2.md)
-* [Lab 3: FPGA](lab3.md)
+* [Lab 3: FPGA](./lab3.md)
 * [Lab 4: Wireless](lab4.md) - (Kirstin: Fix wording)
 * [Milestone 1](milestone1.md) 
 * Claire: Write up!!
