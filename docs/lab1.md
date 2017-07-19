@@ -11,7 +11,6 @@ First, we installed the Arduino IDE from this [link](https://www.arduino.cc/en/M
 
 Second, we tested the blink sketch on the Arduino (File->Examples->Basics->Blink):
 
-<img src="/images/Blink-sketch.png" alt="Blink sketch" width="400" height="284">
 ![Blink sketch](images/Blink-sketch.png)
 
 Third, we modified it to work with an external LED, by adding these lines of code:
@@ -32,7 +31,7 @@ Serial.print("Alpha team!");  //Send text
 Serial.println("");           //Carriage return
 ```
 
-![ArduinoComm](images/ArduinoComm.png)
+![ArduinoComm](/images/ArduinoComm.png)
 
 Fifth, we read an analog input from a potentiometer connected to A0, and used it to control the brightness of the LED:
 
