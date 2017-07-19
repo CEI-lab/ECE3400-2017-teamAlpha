@@ -12,7 +12,7 @@ First, we installed the Arduino IDE from this [link](https://www.arduino.cc/en/M
 Second, we tested the blink sketch on the Arduino (File->Examples->Basics->Blink):
 
 <img src="/images/Blink-sketch.png" alt="Blink sketch" width="400" height="284">
-![Blink sketch](docs/images/Blink-sketch.png)
+![Blink sketch](https://github.com/CEI-lab/ECE3400-2017-teamAlpha/blob/master/docs/images/Blink-sketch.png)
 
 Third, we modified it to work with an external LED, by adding these lines of code:
 
