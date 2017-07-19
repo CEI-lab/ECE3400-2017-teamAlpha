@@ -7,12 +7,12 @@ This website contains useful links, our (simple) solutions to the labs, and our 
 * [Lab 2 Signal Processing](./docs/lab2.md)
 * [Lab 3 FPGA](./docs/lab3.md)
 * [Lab 4 Wireless](./docs/lab4.md)
-* [Milestone 1](./docs/milestone1.md)
-* Write up!!
+* [Milestone 1](./docs/milestone1.md) - (Kirstin: Fix wording)
+* Claire: Write up!!
 * [Milestone 3](./docs/milestone3.md)
 * [Milestone 4](./docs/milestone4.md)
 
-Add pretty photo!
+Claire: Add pretty photo!
 
 
 
