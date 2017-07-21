@@ -8,7 +8,7 @@ This website contains useful links, our (simple) solutions to the labs, and our 
 * [Lab 3: FPGA](./docs/lab3.md)
 * [Lab 4: Wireless](./docs/lab4.md) - (Kirstin: Fix wording)
 * [Milestone 1](./docs/milestone1.md) 
-* [Milestone 2](./docs/milestone4.md)
+* [Milestone 2](./docs/milestone2.md)
 * [Milestone 3](./docs/milestone3.md)
 * [Milestone 4](./docs/milestone4.md)
 
