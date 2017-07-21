@@ -202,7 +202,7 @@ This is the output of the circuit when we held a transmitting treasure close to 
 
 ![Treasure signal](images/lab2_treasure_signal.png)
 
-To find the frequency of the blinking treasure, we connected the output of the phototrasistor to pin A0 on our Arduino and moved the treasure near to the IR sensor. We expect each bin to be about 150 Hz, calculated from [(16 MHz / 32) / 13] / 256. Since the signal we get out of the phototransistor is not a pure sine wave, we expect to see multiple peaks in the FFT. For example, when detecting a 7kHz signal, we expect to see a peak around bin number 46 or 47, but we see the graph below. The highest peak is at bin 47, but we also see several more harmonics. The graph also shows the FFT results for 4 other frequencies, ranging from 7kHz to 17kHz.
+To find the frequency of the blinking treasure, we connected the output of the phototrasistor to pin A0 on our Arduino and moved the treasure near to the IR sensor. We expect each bin to be about 150 Hz, calculated from [(16 MHz / 32) / 13] / 256. Since the signal we get out of the phototransistor is not a pure sine wave, we expect to see multiple peaks in the FFT. For example, when detecting a 7kHz signal, we expect to see a peak around bin number 46 or 47, but instead we see several peaks, as shown in the graph below. The highest peak is at bin 47, but we also see several more harmonics. The graph also shows the FFT results for 4 other frequencies, ranging from 7kHz to 17kHz.
 
 ![Treasure FFT](images/lab2_treasure_fft.png)
 
