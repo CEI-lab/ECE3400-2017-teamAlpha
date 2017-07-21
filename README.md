@@ -14,6 +14,7 @@ This website contains useful links, our (simple) solutions to the labs, and our 
 
 Claire: Add pretty photo!
 
+![robot](./docs/images/robot.png)
 
 
 
