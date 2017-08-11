@@ -30,7 +30,7 @@ The [datasheet](http://www.atmel.com/Images/Atmel-42735-8-bit-AVR-Microcontrolle
 ![Fig. 1: Function Generator](images/func_generator.jpg)
 ![Fig. 2: Oscilloscope](images/scope.jpg)
 
-4.  We then captured data using the fft_adc_serial script from the Open Music Lab library. This script is set to collect 256 samples each run of the FFT. Running at a sampling frequency of 9600Hz, this gives the FFT bins a width of 9600 / 256 = 37.5Hz. 660Hz / 37.5Hz = bin number 17.6. Therefore, we expect to see the peak for the 660Hz input to appear in the 17th bin of our output.
+4.  We then captured data using the fft_adc_serial script from the Open Music Lab library. This script is set to collect 256 samples each run of the FFT. Running at a sampling frequency of 9600Hz, this gives the FFT bins a width of 9600 / 256 = 37.5Hz. This means that we can expect to see the 660Hz signal in bin number 17: 660Hz / 37.5Hz = 17.6.
 
 5.  However, with an input of 660Hz we found an unusual result: the peak for the 660Hz tone appears in the 5th bin!
 
