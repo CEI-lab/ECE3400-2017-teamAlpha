@@ -115,7 +115,7 @@ Interrupts are still enabled, because millis() is used for timing
 -----------
 ```
 
-4.  One analogRead() takes 111.987us, giving a sampling frequency of 1 / 0.000111987 = ~8930Hz. 8930Hz / 256 = 34.9Hz. This means our bins are sensible, but off by ~15Hz. This could be because of variance in the time taken to run analogRead() or because FFT algorithm has limited precision.
+4.  One analogRead() takes 111.987us, giving a sampling frequency of 1 / 0.000111987 = ~8930Hz. 8930Hz / 256 = 34.9Hz. This means our bins are sensible, but off by ~15Hz. This is likely due to the extra clock cycles it takes to run our for-loop. But could also be because of variance in the time taken to run analogRead() (if, for example, other interrupts happen during execution), or because the FFT algorithm has limited precision.
 
 #### Testing the Microphone
 
