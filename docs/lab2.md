@@ -59,7 +59,7 @@ void setup() {
   DIDR0 = 0x01;
 }
 ```
-12. The ADC clock prescalar is adjusted by this script before the FFT runs! 0xe5 is hexidecimal for 11100101, so the final 3 bits are 101. According to this table taken from the datasheet, that gives a prescalar of 32, not the default of 128! This means the ADC clock is running at 500kHz, explaining our FFT output.
+12. The ADC clock prescalar is adjusted by this script before the FFT runs! 0xe5 is hexidecimal for 11100101, so the final 3 bits are 101. According to this table taken from the datasheet, that gives a prescalar of 32, not the default of 128! This means the ADC clock is running at 500kHz, explaining our FFT output. *....This is why commenting all lines of code can be helpful!*
 
 ![Fig. 4: ADCSRA](images/adcsra.png)
 
