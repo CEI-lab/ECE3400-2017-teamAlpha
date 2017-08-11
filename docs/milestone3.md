@@ -1,13 +1,18 @@
-# Milestone 3: Maze navigation algorithm
-## Team Alpha
+# ECE 3400, Fall'17: Team Alpha
 
-We used the standard depth-first search (DFS) algorithm to navigate the maze. The maze can be thought of as a graph, where each grid space on the maze is a node in the graph. Adjacent, unblocked grid spaces on the maze are connected nodes in the graph. 
+*By Claire Chen, June 10th*
+
+## Milestone 3: Maze navigation algorithm
+
+We used a standard, depth-first search (DFS) algorithm to navigate the maze. The maze can be thought of as a graph, where each grid space on the maze is a node in the graph. Adjacent, unblocked grid spaces on the maze are connected nodes in the graph. 
 
 ### Matlab simulation
 
-We first wrote a Matlab simulation to test our algorithm. This allowed us to see the efficiency of the algorithm for various maze configurations and make any changes we wanted to. We needed a stack for DFS, so we found a stack implementation in Matlab's file exhange, [here][https://www.mathworks.com/matlabcentral/fileexchange/28922-list--queue--stack?focused=5187765&tab=function]. 
+* We first wrote a Matlab simulation to test our algorithm. This allowed us to check the efficiency of our algorithm for various maze configurations and make any changes we wanted to before implementing it on a robot. 
 
-The following code displays an image of a 4x5 maze grid with a user-defined wall configuration and the robot in its starting position. The robot's position is stored in an array called *curr_loc*. This array will also hold information about which grid spaces have already been visited. the wall information for each grid space is stored in an array called *wall_loc*. Finally, we've written a color-map, which allows us to determine what colors each value in our curr_loc array map to when it is displayed as an image. Matlab also has pre-defined color-maps.
+* We needed a stack for DFS, so we found a stack implementation in Matlab's file exhange, [here][https://www.mathworks.com/matlabcentral/fileexchange/28922-list--queue--stack?focused=5187765&tab=function]. 
+
+* The following code displays an image of a 4x5 maze grid with a user-defined wall configuration and the robot in its starting position. The robot's position is stored in an array called *curr_loc*. This array will also hold information about which grid spaces have already been visited. the wall information for each grid space is stored in an array called *wall_loc*. Finally, we've written a color-map, which allows us to determine what colors each value in our curr_loc array map to when it is displayed as an image. Matlab also has pre-defined color-maps.
 
 ```matlab
 % Initialize current location maze array
@@ -65,7 +70,7 @@ caxis([0 1])
 draw_walls(wall_loc);
 ```
 
-The walls are dispalyed on the image using the function *draw_walls*. The function takes an array and draws north, south, west, and east walls. The code snipppet below draws north walls on every grid space that has a north wall (as defined by the input array wall_loc).
+* The walls are dispalyed on the image using the function *draw_walls*. The function takes an array and draws north, south, west, and east walls. The code snipppet below draws north walls on every grid space that has a north wall (as defined by the input array wall_loc).
 
 ```matlab
 [num_row, num_col] = size(wall_loc);
@@ -82,17 +87,24 @@ The walls are dispalyed on the image using the function *draw_walls*. The functi
         end
     end
 ```
-At each step of our navigation algorithm, we update the robot's current and previous location is curr_loc and display this new array every 0.5 seconds. The Matlab script can be paused for *n* seconds using the function *pause(n)*.
 
-The video below shows our simulation.
+* At each step of our navigation algorithm, we update the robot's current and previous location is curr_loc and display this new array every 0.5 seconds. The Matlab script can be paused for *n* seconds using the function *pause(n)*.
 
-Note: We implemented a very baseline algorithm. You'll see that the robot traverses the maze very inefficiently, especially when there are unvisitable areas; The robot has to return to its starting position to know if it has visited all unblocked grid spaces. There are many improvements you can make to this algorithm to make it as efficient as possible!
+* The video below shows our simulation.
 
 [![Matlab simulation](http://img.youtube.com/vi/D2ZzObOqn5M/0.jpg)](http://www.youtube.com/watch?v=D2ZzObOqn5M)
 
+Note: We implemented a very baseline algorithm. You'll see that the robot traverses the maze very inefficiently, especially when there are unvisitable areas; The robot has to return to its starting position to know if it has visited all unblocked grid spaces. There are many improvements you can make to this algorithm to make it as efficient as possible!
+
 ### Real-time maze mapping
 
-Once we were happy with our algorithm in simulation, we worked on implementing real-time navigation using that algorithm. We were able to use our line-following/turning code from Milestone 1. We also needed to be able to read the locations of front, left, and right walls at every intersection. For wall detection, it was very important to translate the relative wall locations (front, left, right of the robot) into global wall locations (north, south, east, and west of the maze). The navigation algorithm our robot uses to traverse the maze is the same as the algorithm in the Matlab simulation, with some additional support for getting wall information and moving the robot. Below is a video of the robot traversing a maze with the same wall configuration as in the simulation video above.
+* Once we were happy with our algorithm in simulation, we worked on implementing real-time navigation using that algorithm. We were able to use our line-following/turning code from Milestone 1. We also needed to be able to read the locations of front, left, and right walls at every intersection. 
+
+* For wall detection, it was very important to translate the relative wall locations (front, left, right of the robot) into global wall locations (north, south, east, and west of the maze). 
+
+* The navigation algorithm our robot uses to traverse the maze is the same as the algorithm in the Matlab simulation, with some additional support for getting wall information and for moving the robot. 
+
+* Below is a video of the robot traversing a maze with the same wall configuration as in the simulation video above.
 
 [![Real time navigation](http://img.youtube.com/vi/tvfH1x9lJSg/0.jpg)](http://www.youtube.com/watch?v=tvfH1x9lJSg)
 
