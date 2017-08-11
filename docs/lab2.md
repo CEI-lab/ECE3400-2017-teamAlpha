@@ -5,7 +5,7 @@
 
 ### Goals
 
-The purpose of this lab is to add sensors, signal processing, and filters to the robot. To do this, we worked with the Open Music Lab FFT library for the Arduino. One sub-team, composed of Ryan O'Hern, attached a microphone to distinguish a 660Hz audible start signal; the other sub-team, composed of Claire Chen, attached a IR sensitive transistor to distinguish between treasures emitting IR at 5 different frequencies (from 7-17kHz). 
+The purpose of this lab is to add sensors and signal processing to the robot. Since we will need to use filters for several of the sensors, it makes sense to implement a digital filter instead of many analog filters. To do this, we worked with the Open Music Lab FFT library for the Arduino. One sub-team, composed of Ryan O'Hern, attached a microphone to distinguish a 660Hz audible start signal; the other sub-team, composed of Claire Chen, attached a IR sensitive transistor to distinguish between treasures emitting IR at 5 different frequencies (from 7-17kHz). 
 
 ### Team Acoustic
 
