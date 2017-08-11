@@ -21,35 +21,35 @@ The [datasheet](http://www.atmel.com/Images/Atmel-42735-8-bit-AVR-Microcontrolle
 
 #### Free Running Mode: fft_adc_serial
 
-1.  We added the Open Music Lab FFT library to our Arduino IDE by copying the directory into the 'libraries' folder.
+* We added the Open Music Lab FFT library to our Arduino IDE by copying the directory into the 'libraries' folder.
 
-2.  We started by running the example script *fft_adc_serial*. Before jumping to sampling data from the microphone, we first tested this script using the function generator in the lab.
+* We started by running the example script *fft_adc_serial*. Before jumping to sampling data from the microphone, we first tested this script using the function generator in the lab.
 
-3.  We set the function generator to 660Hz, 1.65Vpp (3.3V/2), with a 0.825V offset (1.65V/2). We confirmed these settings with the oscilloscope.
+* We set the function generator to 660Hz, 1.65Vpp (3.3V/2), with a 0.825V offset (1.65V/2). We confirmed these settings with the oscilloscope.
 
 ![Fig. 1: Function Generator](images/func_generator.jpg)
 ![Fig. 2: Oscilloscope](images/scope.jpg)
 
-4.  We then captured data using the fft_adc_serial script from the Open Music Lab library. This script is set to collect 256 samples each run of the FFT. Running at a sampling frequency of 9600Hz, this gives the FFT bins a width of 9600 / 256 = 37.5Hz. This means that we can expect to see the 660Hz signal in bin number 17: 660Hz / 37.5Hz = 17.6.
+* We then captured data using the fft_adc_serial script from the Open Music Lab library. This script is set to collect 256 samples each run of the FFT. Running at a sampling frequency of 9600Hz, this gives the FFT bins a width of 9600 / 256 = 37.5Hz. This means that we can expect to see the 660Hz signal in bin number 17: 660Hz / 37.5Hz = 17.6.
 
-5.  However, with an input of 660Hz we found an unusual result: the peak for the 660Hz tone appears in the 5th bin!
+* However, with an input of 660Hz we found an unusual result: the peak for the 660Hz tone appears in the 5th bin!
 
-6.  One reason to use the function generator to create our input is that it makes changing that input simple. We gathered samples for integer multiples of 660Hz, first to investigate if the FFT algorithm was behaving sensibly at all and second to get an idea of what the sampling frequency, Fs, might be to produce this result. We copied all of the data into Excel, to see get a visual output.
+* One reason to use the function generator to create our input is that it makes changing that input simple. We gathered samples for integer multiples of 660Hz, first to investigate if the FFT algorithm was behaving sensibly at all and second to get an idea of what the sampling frequency, Fs, might be to produce this result. We copied all of the data into Excel, to see get a visual output.
 
 ![Fig. 3: fft_adc_serial results](images/fft_adc_serial.png)
 
-7.  The peak for each frequency appears in the following bins: (660: 5), (1320: 10), (1980: 14), (2640: 19), (3300: 23), (3960: 27), (4620: 32), (5280: 36), (10560: 71), (21120: 116).
+* The peak for each frequency appears in the following bins: (660: 5), (1320: 10), (1980: 14), (2640: 19), (3300: 23), (3960: 27), (4620: 32), (5280: 36), (10560: 71), (21120: 116).
 
-8.  As you can see from the graph, the FFT algorithm is behaving sensibly. The integer multiples of 660Hz appear in equally spaced bins. Strangely, we are able to detect much higher frequencies than expected. According to the Nyquist–Shannon sampling theorem, the highest frequency we should be able to detect is Fs/2. Yet, we can correctly discern frequencies far above 9600Hz/2.
+* As you can see from the graph, the FFT algorithm is behaving sensibly. The integer multiples of 660Hz appear in equally spaced bins. Strangely, we are able to detect much higher frequencies than expected. According to the Nyquist–Shannon sampling theorem, the highest frequency we should be able to detect is Fs/2. Yet, we can correctly discern frequencies far above 9600Hz/2.
 
-9.  This suggests that we are sampling at over 40kHz. Our reasoning is as follows: 
-* 40kHz / 256 samples = 156Hz/sample
-* 660Hz appears in the 5th bin: 5bins * 156Hz/sample = 780
-* 780 - 156Hz/sample = 624Hz. So with this sampling frequency, 660Hz would indeed appear in the 5th bucket.
+* This suggests that we are sampling at over 40kHz. Our reasoning is as follows: 
+1.  40kHz / 256 samples = 156Hz/sample
+2.  660Hz appears in the 5th bin: 5bins * 156Hz/sample = 780
+3.  780 - 156Hz/sample = 624Hz. So with this sampling frequency, 660Hz would indeed appear in the 5th bucket.
 
-10. Remembering that the ADC clock is set by the main clock speed divided by a power of 2, there are only a few possibilities for the ADC sampling frequency. The closest is ~38kHz (= 16MHz / 32 prescalar / 13 clock cycles). 38kHz / 256 samples = 148.4Hz per bin in our FFT. This matches up well with our results. Knowing this, we have strong reason to suspect that the default settings for the ADC clock are being modified somewhere by our FFT library or by the script we are running.
+* Remembering that the ADC clock is set by the main clock speed divided by a power of 2, there are only a few possibilities for the ADC sampling frequency. The closest is ~38kHz (= 16MHz / 32 prescalar / 13 clock cycles). 38kHz / 256 samples = 148.4Hz per bin in our FFT. This matches up well with our results. Knowing this, we have strong reason to suspect that the default settings for the ADC clock are being modified somewhere by our FFT library or by the script we are running.
 
-11. Looking more closely at the fft_adc_serial script, we noticed there is an obvious suspect line:
+* Looking more closely at the fft_adc_serial script, we noticed there is an obvious suspect line:
 ``` C
 void setup() {
   Serial.begin(115200);
@@ -59,18 +59,18 @@ void setup() {
   DIDR0 = 0x01;
 }
 ```
-12. The ADC clock prescalar is adjusted by this script before the FFT runs! 0xe5 is hexidecimal for 11100101, so the final 3 bits are 101. According to this table taken from the datasheet, that gives a prescalar of 32, not the default of 128! This means the ADC clock is running at 500kHz, explaining our FFT output. *....This is why commenting all lines of code can be helpful!*
+* The ADC clock prescalar is adjusted by this script before the FFT runs! 0xe5 is hexidecimal for 11100101, so the final 3 bits are 101. According to this table taken from the datasheet, that gives a prescalar of 32, not the default of 128! This means the ADC clock is running at 500kHz, explaining our FFT output. *....This is why commenting all lines of code can be helpful!*
 
 ![Fig. 4: ADCSRA](images/adcsra.png)
 
 ![Fig. 5: ADPS](images/adps.png)
 
-13. Note that the datasheet also indicates that running the ADC clock this fast will lower precision: "By default, the successive approximation circuitry requires an input clock frequency between 50kHz and 200kHz to get maximum resolution. If a lower resolution than 10 bits is needed, the input clock frequency to the ADC can be higher than 200kHz to get a higher sample rate." (page 240)
+* Note that the datasheet also indicates that running the ADC clock this fast will lower precision: "By default, the successive approximation circuitry requires an input clock frequency between 50kHz and 200kHz to get maximum resolution. If a lower resolution than 10 bits is needed, the input clock frequency to the ADC can be higher than 200kHz to get a higher sample rate." (page 240)
 
 
 #### Using analogRead(): fft_analogread
 
-1.  We also modified the fft_adc_serial script to use analogRead(), the built-in method for reading an analog input, instead of running the ADC in free-running mode.
+* We also modified the fft_adc_serial script to use analogRead(), the built-in method for reading an analog input, instead of running the ADC in free-running mode.
 
 ```C
 void setup() {
@@ -97,11 +97,11 @@ void loop() {
 }
 ```
 
-2.  We ran the same tests using our function generator, and Excel, and got a much different output than the fft_adc_serial script.
+* We ran the same tests using our function generator, and Excel, and got a much different output than the fft_adc_serial script.
 
 ![Fig. 6: fft_analogread results](images/fft_analogread.png)
 
-3.  The peak for each frequency appears in the following bins: (660: 20), (1320: 39), (1980: 58), (2640: 77), (3300: 96). Obviously the sampling frequency is much lower when using analogRead() compared to free running mode. Arduino makes available a script called [ShowInfo](https://playground.arduino.cc/Main/ShowInfo) that provides a speed test that gives the time taken to do an analogRead(). The results for our Arduino look like:
+* The peak for each frequency appears in the following bins: (660: 20), (1320: 39), (1980: 58), (2640: 77), (3300: 96). Obviously the sampling frequency is much lower when using analogRead() compared to free running mode. Arduino makes available a script called [ShowInfo](https://playground.arduino.cc/Main/ShowInfo) that provides a speed test that gives the time taken to do an analogRead(). The results for our Arduino look like:
 ```
 Speed test
 ----------
@@ -115,47 +115,47 @@ Interrupts are still enabled, because millis() is used for timing
 -----------
 ```
 
-4.  One analogRead() takes 111.987us, giving a sampling frequency of 1 / 0.000111987 = ~8930Hz. 8930Hz / 256 = 34.9Hz. This means our bins are sensible, but off by ~15Hz. This is likely due to the extra clock cycles it takes to run our for-loop. But could also be because of variance in the time taken to run analogRead() (if, for example, other interrupts happen during execution), or because the FFT algorithm has limited precision.
+* One analogRead() takes 111.987us, giving a sampling frequency of 1 / 0.000111987 = ~8930Hz. 8930Hz / 256 = 34.9Hz. This means our bins are sensible, but off by ~15Hz. This is likely due to the extra clock cycles it takes to run our for-loop. But could also be because of variance in the time taken to run analogRead() (if, for example, other interrupts happen during execution), or because the FFT algorithm has limited precision.
 
 #### Testing the Microphone
 
-1.  First, we found a nice [web application to generate a tone](http://www.szynalski.com/tone-generator). 
+* First, we found a nice [web application to generate a tone](http://www.szynalski.com/tone-generator). 
 
 ![Tone generator](images/tone_generator.png)
 
-2. We then tested the microphone by connecting it to an oscilloscope, and realized that we would need to amplify the signal in order for the ADC to read it. 
+* We then tested the microphone by connecting it to an oscilloscope, and realized that we would need to amplify the signal in order for the ADC to read it. 
 
-3. We assembled our microphone with an analog filter and amplifier as shown here:
+* We assembled our microphone with an analog filter and amplifier as shown here:
 
 ![Microphone with amp](./images/mic_with_amp.jpg)
 
 ![Amp diagram](./images/Lab2_amp.png)
 
-4. We tested that this worked using a signal generator and the oscilloscope.
+* We tested that this worked using a signal generator and the oscilloscope.
 
-5. We then connected the output to pin A0 on our Arduino, such that when we played a 660Hz tone next to the microphone it gave us the expected spike in bin 5 (using the fft_adc_serial script).
+* We then connected the output to pin A0 on our Arduino, such that when we played a 660Hz tone next to the microphone it gave us the expected spike in bin 5 (using the fft_adc_serial script).
 
 ### Treasure Team
 
-1.  First, we followed the same steps described above to check that the FFT code was working.
+* First, we followed the same steps described above to check that the FFT code was working.
 
-2.  We use a phototransistor to detect the IR LED treasure with the simple circuit below. Under light, a phototransistor lets current pass - like a closed switch. In darkeness, it lets less current pass - like a closed switch. Using the circuit below, we saw a higher output voltage when we covered the phototransistor and a lower output voltage when we exposed the phototransistor to light. The change in voltage you saw at the output was small (less than 1 V), but this was still enough for the FFT to work on the unamplified signal. 
+* We use a phototransistor to detect the IR LED treasure with the simple circuit below. Under light, a phototransistor lets current pass - like a closed switch. In darkeness, it lets less current pass - like a closed switch. Using the circuit below, we saw a higher output voltage when we covered the phototransistor and a lower output voltage when we exposed the phototransistor to light. The change in voltage you saw at the output was small (less than 1 V), but this was still enough for the FFT to work on the unamplified signal. 
 
 ![Phototransistor circuit](images/lab2_phototransistor_schem.png)
 
-3. By holding the transistor towards the window (sunlight contains IR) and towards the flourescent lights (these flicker at about 120Hz), we checked whether or not we needed to worry about unwanted signals at DC and 120Hz. It seems that a filter (analog or digital) might be worth the trouble. 
+* By holding the transistor towards the window (sunlight contains IR) and towards the flourescent lights (these flicker at about 120Hz), we checked whether or not we needed to worry about unwanted signals at DC and 120Hz. It seems that a filter (analog or digital) might be worth the trouble. 
 
-3.  This is the output of the circuit when we held a transmitting treasure close to the phototransistor: 
+* This is the output of the circuit when we held a transmitting treasure close to the phototransistor: 
 
 ![Treasure signal](images/lab2_treasure_signal.png)
 
-4. To confirm the frequency, we also checked the frequency set on our treasure by directly probing the IR LED.
+* To confirm the frequency, we also checked the frequency set on our treasure by directly probing the IR LED.
 
-5.  To find the frequency of the blinking treasure, we connected the output of the phototrasistor to pin A0 on our Arduino and moved the treasure near to the IR sensor. We expect each bin to be about 150 Hz, calculated from [(16 MHz / 32 prescalar) / 13 clock cylces] / 256 bins. 
+* To find the frequency of the blinking treasure, we connected the output of the phototrasistor to pin A0 on our Arduino and moved the treasure near to the IR sensor. We expect each bin to be about 150 Hz, calculated from [(16 MHz / 32 prescalar) / 13 clock cylces] / 256 bins. 
 
-6.  Since the signal we get out of the phototransistor is not a pure sine wave, we expect to see multiple peaks in the FFT. For example, when detecting a 7kHz signal, we expect to see the main peak in bin number 46 or 47, and several more harmonics at higher frequencies. (The graph also shows the FFT results for 4 other frequencies, ranging from 7kHz to 17kHz.)
+* Since the signal we get out of the phototransistor is not a pure sine wave, we expect to see multiple peaks in the FFT. For example, when detecting a 7kHz signal, we expect to see the main peak in bin number 46 or 47, and several more harmonics at higher frequencies. (The graph also shows the FFT results for 4 other frequencies, ranging from 7kHz to 17kHz.)
 
 ![Treasure FFT](images/lab2_treasure_fft.png)
 
-7. In the future we also plan to investigate a simpler solution where we just detect the time between measured IR pulses. This will be less robust, but perhaps worth the save in memory.
+* In the future we also plan to investigate a simpler solution where we just detect the time between measured IR pulses. This will be less robust, but perhaps worth the save in memory.
 
