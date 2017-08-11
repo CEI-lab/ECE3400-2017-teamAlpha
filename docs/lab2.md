@@ -143,7 +143,7 @@ Interrupts are still enabled, because millis() is used for timing
 
 ![Phototransistor circuit](images/lab2_phototransistor_schem.png)
 
-3. By holding the transistor towards the window (sunlight contains IR) and towards the flourescent lights, we checked whether or not we needed to worry about unwanted signals at DC and 60Hz. It seems that a filter (analog or digital) will definitely be worth the trouble!
+3. By holding the transistor towards the window (sunlight contains IR) and towards the flourescent lights (these flicker at about 120Hz), we checked whether or not we needed to worry about unwanted signals at DC and 120Hz. It seems that a filter (analog or digital) might be worth the trouble. 
 
 3.  This is the output of the circuit when we held a transmitting treasure close to the phototransistor: 
 
@@ -156,4 +156,6 @@ Interrupts are still enabled, because millis() is used for timing
 6.  Since the signal we get out of the phototransistor is not a pure sine wave, we expect to see multiple peaks in the FFT. For example, when detecting a 7kHz signal, we expect to see the main peak in bin number 46 or 47, and several more harmonics at higher frequencies. (The graph also shows the FFT results for 4 other frequencies, ranging from 7kHz to 17kHz.)
 
 ![Treasure FFT](images/lab2_treasure_fft.png)
+
+7. In the future we also plan to investigate a simpler solution where we just detect the time between measured IR pulses. This will be less robust, but perhaps worth the save in memory.
 
