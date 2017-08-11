@@ -4,6 +4,8 @@
 
 This website contains useful links, our (simple) solutions to the labs, and our final robot. We hope you will find it useful and create much better websites yourselves!
 
+***
+
 * [Lab 1: Microcontrollers](lab1.md)
 * [Lab 2: Signal Processing](lab2.md)
 * [Lab 3: FPGA](./lab3.md)
@@ -13,4 +15,8 @@ This website contains useful links, our (simple) solutions to the labs, and our 
 * [Milestone 3](milestone3.md)
 * [Milestone 4](milestone4.md)
 
-ADD PRETTY PHOTO!
+***
+
+Here's our final robot:
+
+![TeamAlpha's Robot](./images/Overview.png)
