@@ -2,7 +2,10 @@
 ## Team Alpha 
 ### Claire Chen and Ryan O'Hern
 
-This website contains useful links, our (simple) solutions to the labs, and our final robot. We hope you will find it useful and create much better websites yourselves!
+This website contains useful links, and our (simple) solutions to the labs and milestone. We hope you will find it useful and create much better websites yourselves! 
+
+*Remember, you will also have to add pages detailing the final design of your robot.*
+
 
 ***
 
