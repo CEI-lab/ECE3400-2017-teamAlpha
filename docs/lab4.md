@@ -148,31 +148,42 @@ radio.stopListening();
 
 * Our code was correct, and the text on the screen read: ```Got payload 147...```
 
-## FPGA
+* We then realized the maze was only supposed to 4 x 5 - oh well! :)
 
-We followed the steps suggested in the lab handout and were able to receive the robot's current location from the Arduino and display this as well as the previous position on the VGA monitor. We were able to accomplish the first step of making the grid larger relatively quickly, as our code from lab 3 was easily scaled-up. 
+## Team Map-Drawing 
+
+* We followed the steps suggested in the lab handout and were able to receive the robot's current location from the Arduino and display this as well as the previous position on the VGA monitor. We were able to accomplish the first step of making the grid larger relatively quickly, as our code from Lab 3 was easily scaled-up! 
 
 ![4 by 5 grid](images/lab4_4by5.png)
 
-Next, after some brainstorming, we decided to use SPI rather than the parallel method of communcation we chose to implement in lab 3. Even though the parallel method is much simpler to implement, we weighed the pros and cons of each method and decided that SPI makes more sense when transmitting packets that are several bits long. SPI is the most complex part of our FPGA design since it requires working with two clocks: the FPGA 25MHz system clock and the SPI clock. All of the VGA drawing is clocked on the system clock, while data on the SPI MOSI line comes in with SCLK. We needed to find some way of synchronizing these two clocks to read packets correctly.  
+* Next, after some brainstorming, we decided to use serial communication, specifically SPI, rather than the parallel method of communcation we implemented in Lab 3. Parallel communication is much simpler to implement, but SPI seems to make more sense when transmitting packets that are several bits long. 
 
-The best way getting outut to aid in debugging FPGA code is to output signals to GPIO signals and probe them with a scope. Using a scope to view signals helped us immensely in the process of writing a functional SPI unit, as it allowed us to completely understand how SPI signals from the Arduino behave and how our signals were responding. First, we probed the SPI signals from the Arduino: SCLK, MOSI, and Chip select (CS). The images below show SCLK as well as both the CS (top image) and MOSI (bottom image) lines (we couldn't view all these signals at once since the scopes in lab only have 2 inputs). The most notable thing we learned from probing the signals is that the SCLK signal is _NOT_ always on; if you send one 8-bit packet, there will only be 8 SCLK cycles. This will be important to keep in mind when writing your SPI code.
+### Implementing SPI on the FPGA
 
-SCLK (yellow) and CS (blue)
+* SPI will be the most complex part of our FPGA design since it requires working with two clocks: the FPGA 25MHz system clock and the SPI clock. All of the VGA driver is driven by the system clock, while data on the SPI MOSI line comes in with SCLK. We needed to find some way of synchronizing these two clocks to read packets correctly.  
+
+* The easiest way to debug FPGA code is to output signals to GPIO signals and probe them with a scope. First, we probed the SPI signals from the Arduino: SCLK, MOSI, and Chip select (CS). The images below show SCLK as well as both the CS (top image) and MOSI (bottom image) lines (we couldn't view all these signals at once since the scopes in lab only have 2 inputs). The most notable thing we learned from probing the signals is that the SCLK signal is _NOT_ always on; if you send one 8-bit packet, there will only be 8 SCLK cycles. This will be important to keep in mind when writing your SPI code.
+
+SCLK (yellow) and CS (blue):
 ![SCLK and CS](images/lab4_sclk_cs.png)
 
-SCLK (yellow) and MOSI (blue)
+SCLK (yellow) and MOSI (blue):
 ![SCLK and MOSI](images/lab4_sclk_mosi.png)
 
-Since SCLK only happens when packets are being transmitted, we thought that sampling SCLK using the FPGA clock would be the best way to synchronize all the SPI signals with the system clock. _Note: This sampling implemenation only works because we know the SPI clock is slower than the FPGA clock._ We use shift registers (clocked on the FPGA clock) to hold the history of all three SPI signals. By storing the recent history of SCLK, we are able to detect a rising edges. When CS is low (CS is active-low), we sample the MOSI line on every rising SCLK edge. We know the packet is complete when we've read in 8-bits. We then parse the valid packet into x-coordinate and y-coordinate values, and use these to change the state of the corresonding index in our grid array.
+* Since SCLK only switches when packets are being transmitted, we decided that sampling SCLK using the FPGA clock would be the best way to synchronize all the SPI signals with the system clock. _Note: This sampling implementation only works because we know the SPI clock is slower than the FPGA clock._ We use shift registers (clocked on the FPGA clock) to hold the history of all three SPI signals. By storing the recent history of SCLK, we are able to detect a rising edge. When CS is low (CS is active-low), we sample the MOSI line on every rising SCLK edge. We know the packet is complete when we've read in 8-bits. We then parse the valid packet into x-coordinate and y-coordinate values, and use these to change the state of the corresonding index in our grid array.
 
-Video of FPGA displaying current location from Arduino
+* Video of FPGA displaying current location from Arduino:
 [![Displaying current location](http://img.youtube.com/vi/25ztPch7OUc/0.jpg)](http://www.youtube.com/watch?v=25ztPch7OUc)
 
+### Marking previously visited sites
 
-The final part of this lab was to mark all previously-visited on the grid. To achieve this, we needed to implement some way for the state machine to remember the previous coordinates of the robot. We chose to use an additional register to hold this information. Every time the robot moved coordinates, the previous coordinate register would update. We also needed to modify the grid array to hold an additonal bit of information: whether or not the grid space had been visited. Our grid array now held 2 bits of information. We used the previous-coordinate information to update the grid array everytime the robot moved. We didn't need to change the way we displayed our maze grid at all; we simply added an additional line of logic to draw any previously-visited squares as green, rather than white.
+* The final part of this lab was to mark all previously-visited sites on the grid. To achieve this, we needed to implement some way for the state machine to remember the previous coordinates of the robot. 
 
-The video below shows the final deliverable for this lab: coordinates being sent from the Arduino to the FPGA via SPI and the robot's current and previous locations being displayed on the screen.
+* We chose to use an additional register to hold this information. Every time the robot moved coordinates, the previous coordinate register would update. 
 
-Video of FPGA displaying current and previous locations
+* We also modified the grid array to hold an additonal bit of information: whether or not the grid space had been visited. Our grid array now holds 2 bits of information. We used the previous-coordinate information to update the grid array everytime the robot moved. We didn't change the way we displayed our maze grid at all; we simply added an additional line of logic to draw any previously-visited squares as green, rather than white.
+
+* The video below shows the final deliverable for this lab: coordinates being sent from the Arduino to the FPGA via SPI and the robot's current and previous locations being displayed on the screen.
+
+* Video of FPGA displaying current and previous locations
 [![Displaying current and previous location](http://img.youtube.com/vi/nVu4KmAXPKM/0.jpg)](http://www.youtube.com/watch?v=nVu4KmAXPKM)
