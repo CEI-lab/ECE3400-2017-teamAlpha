@@ -1,5 +1,6 @@
 # ECE 3400, Fall 2017
-## Team Alpha: Claire Chen, Christopher Fedors, Ryan O'Hern, and Kirstin Petersen
+## Team Alpha 
+### Claire Chen and Ryan O'Hern
 
 This website contains useful links, our (simple) solutions to the labs, and our final robot. We hope you will find it useful and create much better websites yourselves!
 
