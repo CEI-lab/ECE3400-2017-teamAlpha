@@ -14,10 +14,12 @@
 ![Arduino with radio](images/radio.png)
 
 * Next, we set the two channel numbers for our team according to the formula given in the lab handout.
+
 ``` C
 // Radio pipe addresses for the 2 nodes to communicate.
 const uint64_t pipes[2] = { 0x0000000002LL, 0x0000000003LL };
 ```
+
 * We programmed both Arduinos with the GettingStarted example.
 * Finally, we plugged both Arduinos into the PC simultaneously. We used the serial monitor to set one to transmit mode, and confirmed that it was sending messages. We then switched to the other COM-port on the serial monitor, to see if the other one was receiving these messages.
 
@@ -26,6 +28,7 @@ const uint64_t pipes[2] = { 0x0000000002LL, 0x0000000003LL };
 * We chose to send each position in the maze as a character. According the documentation for the radio library, the default payload size is 32 bytes, so we have more than enough room to send 25 characters for a 5 x 5 maze. We can send the entire maze as a single payload.
 
 * Defining the maze:
+
 ``` C
 unsigned char maze[5][5] =
 {
@@ -38,6 +41,7 @@ unsigned char maze[5][5] =
 ```
 
 * Sender side:
+
 ``` C
 // Send the maze in a single payload
 printf("Now sending the maze!\n");
@@ -53,6 +57,7 @@ radio.startListening();
 ```
 
 * Receiver side:
+
 ``` C
 unsigned char got_maze[5][5];
 bool done = false;
@@ -89,6 +94,7 @@ while (!done)
 * We pack our byte using a bit shifting scheme and send it in a single payload. It is unpacked on the receiver side using masking along with bit shifting.
 
 * Sender side:
+
 ```C
 unsigned char new_data;
 // Pack the bits in this pattern
@@ -124,6 +130,7 @@ radio.startListening();
 In binary this packed character looks like 10010011. In decimal notation this is 147. We can easily check on the receiver side that the right byte is being received by taking advantage of this.
 
 * Receiver side:
+
 ```C
 unsigned char got_data;
 bool done = false;
@@ -173,7 +180,7 @@ SCLK (yellow) and MOSI (blue):
 * Since SCLK only switches when packets are being transmitted, we decided that sampling SCLK using the FPGA clock would be the best way to synchronize all the SPI signals with the system clock. _Note: This sampling implementation only works because we know the SPI clock is slower than the FPGA clock._ We use shift registers (clocked on the FPGA clock) to hold the history of all three SPI signals. By storing the recent history of SCLK, we are able to detect a rising edge. When CS is low (CS is active-low), we sample the MOSI line on every rising SCLK edge. We know the packet is complete when we've read in 8-bits. We then parse the valid packet into x-coordinate and y-coordinate values, and use these to change the state of the corresonding index in our grid array.
 
 * Video of FPGA displaying current location from Arduino:
-[![Displaying current location](http://img.youtube.com/vi/25ztPch7OUc/0.jpg)](http://www.youtube.com/watch?v=25ztPch7OUc)
+[![Displaying current location](http://img.youtube.com/vi/25ztPch7OUc/0.jpg)](https://youtu.be/XbKqRZdq1y8)
 
 ### Marking previously visited sites
 
@@ -186,4 +193,4 @@ SCLK (yellow) and MOSI (blue):
 * The video below shows the final deliverable for this lab: coordinates being sent from the Arduino to the FPGA via SPI and the robot's current and previous locations being displayed on the screen.
 
 * Video of FPGA displaying current and previous locations
-[![Displaying current and previous location](http://img.youtube.com/vi/nVu4KmAXPKM/0.jpg)](http://www.youtube.com/watch?v=nVu4KmAXPKM)
+[![Displaying current and previous location](http://img.youtube.com/vi/nVu4KmAXPKM/0.jpg)](https://youtu.be/Kxz_GAM7Olg)
