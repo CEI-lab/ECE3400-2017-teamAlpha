@@ -10,7 +10,7 @@ We used a standard, depth-first search (DFS) algorithm to navigate the maze. The
 
 * We first wrote a Matlab simulation to test our algorithm. This allowed us to check the efficiency of our algorithm for various maze configurations and make any changes we wanted to before implementing it on a robot. 
 
-* We needed a stack for DFS, so we found a stack implementation in Matlab's file exhange, [here][https://www.mathworks.com/matlabcentral/fileexchange/28922-list--queue--stack?focused=5187765&tab=function]. 
+* We needed a stack for DFS, so we found a stack implementation in Matlab's file exhange, [here](https://www.mathworks.com/matlabcentral/fileexchange/28922-list--queue--stack?focused=5187765&tab=function). 
 
 * The following code displays an image of a 4x5 maze grid with a user-defined wall configuration and the robot in its starting position. The robot's position is stored in an array called *curr_loc*. This array will also hold information about which grid spaces have already been visited. the wall information for each grid space is stored in an array called *wall_loc*. Finally, we've written a color-map, which allows us to determine what colors each value in our curr_loc array map to when it is displayed as an image. Matlab also has pre-defined color-maps.
 
