@@ -6,7 +6,7 @@ This website contains useful links, our (simple) solutions to the labs, and our 
 * [Lab 1: Microcontrollers](lab1.md)
 * [Lab 2: Signal Processing](lab2.md)
 * [Lab 3: FPGA](./lab3.md)
-* [Lab 4: Wireless](lab4.md) - (Kirstin: Fix wording)
+* [Lab 4: Wireless](lab4.md)
 * [Milestone 1](milestone1.md) 
 * Claire: Write up!!
 * [Milestone 3](milestone3.md)
