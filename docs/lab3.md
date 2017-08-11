@@ -87,10 +87,10 @@ Next, we were given a VGA module to drive the screen. We read through this modul
 First, we changed the color of the screen to green, blue, and red.
 
 ```verilog
-assign PIXEL_COLOR = 8'b000_000_00 \\black
-assign PIXEL_COLOR = 8'b111_000_00 \\red
-assign PIXEL_COLOR = 8'b000_111_00 \\green
-assign PIXEL_COLOR = 8'b000_000_11 \\blue
+assign PIXEL_COLOR = 8'b000_000_00 //black
+assign PIXEL_COLOR = 8'b111_000_00 //red
+assign PIXEL_COLOR = 8'b000_111_00 //green
+assign PIXEL_COLOR = 8'b000_000_11 //blue
 ```
 (Fyi, underscores in Verilog are ignored by the compiler, they're just there for readability!)
 
