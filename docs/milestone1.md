@@ -8,7 +8,7 @@
 
 The goal of this milestone was to add sensors and feedback control to our robot.
 
-### Solution
+### Following a Line
 
 First, we worked on getting the robot to follow a black line on a white background. We began by testing the line sensors to get a sense of what values to expect over light and dark surfaces. This was how we determined the threshold values in the Arduino code. Once we could determine if of the center of the robot was over a light or dark surface, we used this information to write a simple control algorithm: 
 ```C
@@ -30,7 +30,7 @@ See video of robot following a line here:
 
 [![Line following robot](http://img.youtube.com/vi/TijvBkSl2sc/0.jpg)](http://www.youtube.com/watch?v=TijvBkSl2sc)
 
-### Figure-Eight
+### Driving in a Figure-Eight
 
 Next, we added turning functionality. As mentioned above, we used two additional line sensors to detect when a robot has arrived at an intersection. Our turning algorithm assumes that the robot is at an intersection. The robot begins its turn by turning off the current line that it is on, and stops turning when the two center sensors have found a new line.
 
