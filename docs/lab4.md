@@ -3,6 +3,8 @@
 
 *By Ryan O'Hern and Claire Chen, June 21st 2017*
 
+***
+
 ## Team Radio
 
 * FYI: The easiest thing for this lab is to have two computers, each hooked up to a separate Arduino. However, I only had one, so here's a trick to make it work. It is fine to have two Arduinos connected to the same PC, but you will only be able to talk to one over the serial monitor at a time in the Arduino IDE. Change between the two by choosing between the two ports in the Tools --> Port menu.
@@ -156,6 +158,8 @@ radio.stopListening();
 * Our code was correct, and the text on the screen read: ```Got payload 147...```
 
 * We then realized the maze was only supposed to 4 x 5 - oh well! :)
+
+***
 
 ## Team Map-Drawing 
 
