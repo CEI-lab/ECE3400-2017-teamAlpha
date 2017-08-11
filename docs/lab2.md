@@ -127,9 +127,9 @@ Interrupts are still enabled, because millis() is used for timing
 
 3. We assembled our microphone with an analog filter and amplifier as shown here:
 
-![Microphone with amp](images/mic_with_amp.jpg)
+![Microphone with amp](./images/mic_with_amp.jpg)
 
-![Amp diagram](images/Lab2_amp.png)
+![Amp diagram](./images/Lab2_amp.png)
 
 4. We tested that this worked using a signal generator and the oscilloscope.
 
