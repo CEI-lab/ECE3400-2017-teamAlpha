@@ -1,47 +1,32 @@
-# Lab 4
-## Team Alpha
+# ECE 3400, Fall'17: Team Alpha
+## Lab 4: Radio Communication and Map Drawing
 
-Note: This lab requires two Arduinos powered on simultaneously. It is fine to have two Arduinos connected to the same PC, but you will only be able to talk to one over the serial monitor at a time in the Arduino IDE. Change between the two by choosing between the two ports in the Tools --> Port menu.
+*By Ryan O'Hern and Claire Chen, June 21st 2017*
 
-## Radio
+## Team Radio
 
-### Hardware
+* FYI: The easiest thing for this lab is to have two computers, each hooked up to a separate Arduino. However, I only had one, so here's a trick to make it work. It is fine to have two Arduinos connected to the same PC, but you will only be able to talk to one over the serial monitor at a time in the Arduino IDE. Change between the two by choosing between the two ports in the Tools --> Port menu.
 
-First we handled the hardware:
-- Download the radio library and install with the Arduino IDE.
-  https://github.com/maniacbug/RF24
-- Download the GettingStarted example from the lab4 course repository.
-- We skippped soldering two radio headers as there were already complete versions in the lab.
-- Found two radios.
-- Found two Arduinos.
-- Plugged the radios into the Arduinos along with the 3.3V wire.
+### Testing the radios
+* First, we downloaded the [radio library](https://github.com/maniacbug/RF24) and installed it with the Arduino IDE. We then downloaded the GettingStarted example from the lab4 course repository.
+* We found two level-converters for the radios that were already soldered up, so we didn't have to solder anything. We then plugged the radios into the Arduinos along with a 3.3V supply.
 
 ![Arduino with radio](images/radio.png)
 
-### Software: Getting Started
-
-Then we handled the software for GettingStarted:
-- Set the two channel numbers for our team according to the formula given in the lab handout.
-
+* Next, we set the two channel numbers for our team according to the formula given in the lab handout.
 ``` C
 // Radio pipe addresses for the 2 nodes to communicate.
 const uint64_t pipes[2] = { 0x0000000002LL, 0x0000000003LL };
 ```
+* We programmed both Arduinos with the GettingStarted example.
+* Finally, we plugged both Arduinos into the PC simultaneously. We used the serial monitor to set one to transmit mode, and confirmed that it was sending messages. We then switched to the other COM-port on the serial monitor, to see if the other one was receiving these messages.
 
-- Program both Arduinos with the GettingStarted example.
-- Plug both Arduinos into the PC simultaneously. Use the serial monitor to set one to transmit mode and confirm that it says it is sending messages. Switch to the other on the serial monitor to see if it is receiving these messages.
+### Sending the Maze
 
-### Software: Sending the Maze
+* We chose to send each position in the maze as a character. According the documentation for the radio library, the default payload size is 32 bytes, so we have more than enough room to send 25 characters for a 5 x 5 maze. We can send the entire maze as a single payload.
 
-We chose to send each position in the maze as a character. According the documentation for the radio library, the default payload size is 32 bytes, so we have more than enough room to send 25 characters for our 5 x 5 maze. We can send the entire maze as a single payload.
-
-[Note: The original lab writeup does not appear to consider this option and assumes every character will be sent as its own payload.]
-
-***Defining the maze:***
+* Defining the maze:
 ``` C
-//
-// Maze
-//
 unsigned char maze[5][5] =
 {
   3, 3, 3, 3, 3,
@@ -52,7 +37,7 @@ unsigned char maze[5][5] =
 };
 ```
 
-***Sender side:***
+* Sender side:
 ``` C
 // Send the maze in a single payload
 printf("Now sending the maze!\n");
@@ -67,7 +52,7 @@ else
 radio.startListening();
 ```
 
-***Receiver side:***
+* Receiver side:
 ``` C
 unsigned char got_maze[5][5];
 bool done = false;
@@ -91,19 +76,19 @@ while (!done)
 }
 ```
 
-Because the radio library implements Acks behind the scenes (this is handled by radio.write()), we do not need to manually acknowledge received packets.
+* By reading through the libraries, we found that the radio library implements Acknowledges (ACKs) already (this is handled by radio.write()), therefore we do not need to manually acknowledge received packets.
 
-A different approach to sending the data, say splitting it over multiple payloads, would require a state machine to resend un-Acked packets.
+* A different approach to sending the data, say splitting it over multiple payloads, would require a state machine to resend un-Acknowledged packets.
 
-### Software: Sending New Data
+### Sending New Data
 
-We want to send three pieces of information, the x-coordinate, the y-coordinate, and the state of the current position. Because our maze is 5 x 5, we need 3 bits for each coordinate. Only four values are possible for the state of the current position: unvisited, no wall, wall, and treasure. Hence we need 2 bits for the state.
+* We want to send three pieces of information, the x-coordinate, the y-coordinate, and the state of the current position. Because our maze is 5 x 5, we need 3 bits for each coordinate. Only four values are possible for the state of the current position: unvisited, no wall, wall, and treasure. Hence we need 2 bits for the state.
 
-This gives us 8 bits of data, which can be packed into a single byte. (Note: the default payload size is 32 bytes, so to actually reduce the # of bytes sent by the radio requires changing this setting.)
+* This gives us 5 bits of data, which can be packed into a single byte. (Note: the default payload size is 32 bytes, so to actually reduce the # of bytes sent by the radio requires changing this setting.)
 
-We pack our byte using a bit shifting scheme and send it in a single payload. It is unpacked on the receiver side using masking along with bit shifting.
+* We pack our byte using a bit shifting scheme and send it in a single payload. It is unpacked on the receiver side using masking along with bit shifting.
 
-***Sender side:***
+* Sender side:
 ```C
 unsigned char new_data;
 // Pack the bits in this pattern
@@ -138,7 +123,7 @@ radio.startListening();
 
 In binary this packed character looks like 10010011. In decimal notation this is 147. We can easily check on the receiver side that the right byte is being received by taking advantage of this.
 
-***Receiver side:***
+* Receiver side:
 ```C
 unsigned char got_data;
 bool done = false;
@@ -161,7 +146,7 @@ while (!done)
 radio.stopListening();
 ```
 
-If our code is correct, this will print: ```Got payload 147...```
+* Our code was correct, and the text on the screen read: ```Got payload 147...```
 
 ## FPGA
 
