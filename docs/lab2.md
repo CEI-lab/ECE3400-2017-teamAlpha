@@ -135,17 +135,25 @@ Interrupts are still enabled, because millis() is used for timing
 
 5. We then connected the output to pin A0 on our Arduino, such that when we played a 660Hz tone next to the microphone it gave us the expected spike in bin 5 (using the fft_adc_serial script).
 
-### Treasure
+### Treasure Team
 
-We use a phototransistor to detect the IR LED treasure with the simple circuit below. Under light, a phototransistor lets current pass - like a closed switch. In darkeness, it lets less current pass - like a closed switch. Using the circuit below, we saw a higher output voltage when we covered the phototransistor and a lower output voltage when we exposed the phototransistor to light. The change in voltage you we saw at the output was small (less than 1 V), but this was still enough for the FFT to work on the unamplified signal. 
+1.  First, we followed the same steps described above to check that the FFT code was working.
+
+2.  We use a phototransistor to detect the IR LED treasure with the simple circuit below. Under light, a phototransistor lets current pass - like a closed switch. In darkeness, it lets less current pass - like a closed switch. Using the circuit below, we saw a higher output voltage when we covered the phototransistor and a lower output voltage when we exposed the phototransistor to light. The change in voltage you saw at the output was small (less than 1 V), but this was still enough for the FFT to work on the unamplified signal. 
 
 ![Phototransistor circuit](images/lab2_phototransistor_schem.png)
 
-This is the output of the circuit when we held a transmitting treasure close to the phototransistor. To confirm the frequency, we also checked the frequency set on our treasure by directly probing the IR LED.
+3. By holding the transistor towards the window (sunlight contains IR) and towards the flourescent lights, we checked whether or not we needed to worry about unwanted signals at DC and 60Hz. It seems that a filter (analog or digital) will definitely be worth the trouble!
+
+3.  This is the output of the circuit when we held a transmitting treasure close to the phototransistor: 
 
 ![Treasure signal](images/lab2_treasure_signal.png)
 
-To find the frequency of the blinking treasure, we connected the output of the phototrasistor to pin A0 on our Arduino and moved the treasure near to the IR sensor. We expect each bin to be about 150 Hz, calculated from [(16 MHz / 32) / 13] / 256. Since the signal we get out of the phototransistor is not a pure sine wave, we expect to see multiple peaks in the FFT. For example, when detecting a 7kHz signal, we expect to see a peak around bin number 46 or 47, but instead we see several peaks, as shown in the graph below. The highest peak is at bin 47, but we also see several more harmonics. The graph also shows the FFT results for 4 other frequencies, ranging from 7kHz to 17kHz.
+4. To confirm the frequency, we also checked the frequency set on our treasure by directly probing the IR LED.
+
+5.  To find the frequency of the blinking treasure, we connected the output of the phototrasistor to pin A0 on our Arduino and moved the treasure near to the IR sensor. We expect each bin to be about 150 Hz, calculated from [(16 MHz / 32 prescalar) / 13 clock cylces] / 256 bins. 
+
+6.  Since the signal we get out of the phototransistor is not a pure sine wave, we expect to see multiple peaks in the FFT. For example, when detecting a 7kHz signal, we expect to see the main peak in bin number 46 or 47, and several more harmonics at higher frequencies. (The graph also shows the FFT results for 4 other frequencies, ranging from 7kHz to 17kHz.)
 
 ![Treasure FFT](images/lab2_treasure_fft.png)
 
