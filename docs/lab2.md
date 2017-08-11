@@ -129,11 +129,11 @@ Interrupts are still enabled, because millis() is used for timing
 
 ![Microphone with amp](images/mic_with_amp.jpg)
 
-![Amp diagram](images/amp_diagram.jpg)
+![Amp diagram](images/Lab2_amp.png)
 
 4. We tested that this worked using a signal generator and the oscilloscope.
 
-5.  We then connected the output to pin A0 on our Arduino, such that when we played a 660Hz tone next to the microphone it gave us the expected spike in bin 5 (using the fft_adc_serial script).
+5. We then connected the output to pin A0 on our Arduino, such that when we played a 660Hz tone next to the microphone it gave us the expected spike in bin 5 (using the fft_adc_serial script).
 
 ### Treasure
 
