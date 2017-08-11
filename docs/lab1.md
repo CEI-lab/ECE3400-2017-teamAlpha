@@ -21,7 +21,7 @@ pinMode(9, OUTPUT); //Setup pin 9 as output
 digitalWrite(ledPin, HIGH); //Turn on LED
 digitalWrite(ledPin, LOW); //Turn off LED
 ```
-[![Blinky](images/thumbnail_blinky.jpg)](https://youtu.be/tHVKVdAuRxc)
+[![Blinky](images/thumbnail_blinky.jpg)](https://youtu.be/z8Kf3104ELw)
 
 
 * Fourth, we communicated over serial interface:
@@ -42,7 +42,7 @@ Serial.println(potmeter);  //Send the potmeter value to the screen
 analogWrite(ledPin, potmeter>>2); //The analog write function only takes 8bits, so we have to divide our value by 4
 ```
 
-[![Brightness_control](images/thumbnail_brightness_control.jpg)](https://youtu.be/s1B5GrTkDZo)
+[![Brightness_control](images/thumbnail_brightness_control.jpg)](https://youtu.be/uHotUJJCtIg)
 
 * Sixth, we controlled a continuous rotation servo-motor using the library servo.h:
 
@@ -53,10 +53,13 @@ myservo.attach(11); //Attach the servo input to pin 11 (set it up as a pwm outpu
 myservo.write(0);   //0 is full speed reverse, 90 no speed, 180 full speed ahead
 ```
 
-* Finally, we assembled our robot and made it drive in a (sorta) square. Clearly we need to tune the motor values better, and start relying on sensors to track the black lines in the future!
+* Then we assembled the robot, here are the pieces we used:
 
 ![AssembledRobot](images/Assembly.jpg)
-[![RobotDrivingInaSquare](images/thumbnail_square.jpg)](https://youtu.be/L83JydJF4H8)
+
+* Finally, we made it drive in a (sorta) square. Clearly we need to tune the motor values better, and start relying on sensors to track the black lines in the future!
+
+[![RobotDrivingInaSquare](images/thumbnail_square.jpg)](https://youtu.be/ECudKlTpg3w)
 
 ### Helpful links
 
