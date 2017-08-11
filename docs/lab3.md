@@ -1,13 +1,16 @@
+# ECE 3400, Fall'17: Team Alpha
+## Lab 3: Digital Logic
 
-# Lab 3: Digital Logic
-## Team Alpha, ECE 3400, Fall 2017
+*By Claire Chen, June 21st 2017*
 
 ### Goal: 
-This lab is divided into two. One (half-) team will take at least two external inputs to the FPGA and display them on a screen. The other team will react to an external input of their choice and output a short 'tune' consisting of at least three tones - This tone will correspond to a signal indicating that the robot is done searching the maze.
+In this lab, we will create the beginning of the FPGA configuration that will work in the final system. This involves both drawing information on a screen, and sending a 'done' tune to a speaker. 
 
-### Lab3 Team 1, Screen Driver:
+### Team Screen:
 
-We decided to connect two toggle switches and show the change in a 2-by-2 grid on the screen. Later, this code can be expanded to display the full maze. The following figure shows an overview of our system:
+#### Generating the input signal
+
+We decided to connect two toggle switches to the FPGA and show the change in a 2-by-2 grid on the screen. Later, this code can be expanded to display the full maze. The following figure shows an overview of our system:
 
 ![Team Assignment](images/lab3_team_assignment.png)
 
@@ -74,6 +77,8 @@ assign LED[2] = grid_array[1][0];
 assign LED[3] = grid_array[1][1];
 ```
 See a video of our system here: ![video](https://youtu.be/gW4KrWujsEI).
+
+#### Drawing on the screen
 
 Next, we were given a VGA module to drive the screen. We read through this module carefully, and came to the conclusion that it works like the following sketch illustrates. Our job will be to modify the main module. 
 
@@ -176,13 +181,14 @@ end
 ```
 ![FPGA control of screen](images/FPGA_screen.png)
 
+#### Final screen driver
 
 Finally, we merged our code so that the switches toggled the state of the screen. Check out the video here:
 
 [![FPGA Screen Interface](images/Arduino_FPGA_interface.png)](https://youtu.be/KMW1bO6gJTg)
 
 
-### Lab 3 Team 2: Sound generation
+### Team Tune
 
 First, we began by implementing the most basic sound wave - a square wave. We chose to generate a 440Hz wave and output this to  GPIO pin. For this, we wrote a simple state machine to increment a counter and output a pulse based on the value of that counter. Generating a wave of a certain frequency requires considering the frequency that our state machine is clocked at and choosing a counter value based on that to give us our desired frequency. The state machine clock is 25MHz, which means the period of the 440Hz wave will be approximately 56818 cycles (25MHz/440Hz) of the state machine clock period. In other words, square pulse must toggle every 25MHz/440Hz/2 cycles. The code to achieve that as well as a picture of our 440Hz square wave shown below.
 
@@ -353,7 +359,7 @@ After all of this experimentation, we finally decided that the sine wave produce
     end
   end //always @ (posedge clk)
 ```
-### Concluding Remarks:
+### Thinking Ahead!
 
 Finally, we have to think about how this will work for our final system. We will have to display the full maze on the screen, including treasures, walls, unknown and travelled areas, and the robot itself. We also need to be able to display when the robot has finished traversing the maze.  Here are the questions we discussed:
 
