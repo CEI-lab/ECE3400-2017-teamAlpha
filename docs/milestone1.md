@@ -15,9 +15,9 @@ First, we worked on getting the robot to follow a black line on a white backgrou
 If left front sensor is equal to right front sensor:
   Go straight
 Else if left front sensor sees white:
-  Turn right (run left motor faster than right motor)
+  Adjust right (run left motor faster than right motor)
 Else if right front sensor sees white:
-  Turn left (run right motor faster than left motor)
+  Adjust left (run right motor faster than left motor)
 ```
 
 We used four QRE113 line sensors arranged in the following configuration. As noted in the image, the center two sensors are for keeping the robot aligned forward, and the two outer sensors are for detecting when the robot has reached an intersection. 
