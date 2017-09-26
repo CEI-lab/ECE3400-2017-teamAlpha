@@ -33,41 +33,6 @@ We then made a state machine that loops through each register in the array and d
 
 ![FPGA state machine](images/FPGA_state_machine.png)
 
-```verilog
-
-// State 0: Loop through grid
-if (state == 0) begin
-  if (grid_ind_x < 1) begin         //If X-coordinate is 0
-    grid_ind_x <= grid_ind_x + 1;   //X-coordinate = 1
-  end
-  else begin                        //If X-coordinate is 1
-    grid_ind_x <= 0;                //X-coordinate = 0
-    if (grid_ind_y < 1) begin       //If Y-coordinate is 0
-      grid_ind_y <= grid_ind_y + 1; //Y-coordinate = 1
-    end
-    else begin                      //else Y-coordinate = 0
-      grid_ind_y <= 0;
-    end
-  end
-  state <= 1;                       //Switch to state 1
-end // state 0
-
-// State 1: If at highlighed coordinates, set grid space to 1, else set to 0
-else if (state == 1) begin
-  if (grid_ind_x == highlighted_x && grid_ind_y == highlighted_y) begin
-    grid_array[grid_ind_y][grid_ind_x] <= 1;
-  end
-  else begin
-    grid_array[grid_ind_y][grid_ind_x] <= 0;
-  end
-  state <= 0;
-end // state 1
-
-else begin                          //Default
-  state <= state;
-end
-```
-
 To check our code without the screen, we first connected four of the LEDs on the FPGA board, each one representing a different position in the grid. 
 
 ```verilog
@@ -110,75 +75,10 @@ The signal inside the bracket is called a sensitivity list. An asterix means tha
 
 Third, we want to draw four boxes on the screen and color them dependent on the values in our array (0 for not highlighted, and 1 for highlighted). 
 
-To accomplish this, we must first have some way of determining if the current pixel output by the VGA driver is in the grid, and if so, what square it is in. In order to create modularity in our code, we decided to write a new module that we could instantiate in our top-level module. The module takes in the current x- and y- coordinates from the VGA driver and outputs a 0 or 1 according to the grid space it is in, OR a 2 if the pixel is simply not in the grid. This module is shown below. 
+To accomplish this, we must first have some way of determining if the current pixel output by the VGA driver is in the grid, and if so, what square it is in. In order to create modularity in our code, we decided to write a new module that we could instantiate in our top-level module. The module takes in the current x- and y- coordinates from the VGA driver and outputs a 0 or 1 according to the grid space it is in, OR a 2 if the pixel is simply not in the grid. 
 
-```verilog
-`define GRID_TOP_LEFT_X 0   //Potential offset from the corner
-`define GRID_TOP_LEFT_Y 0   //Potential offset from the corner
-`define BLOCK_SIZE      64  //Each block will be 64 by 64 pixels
+Next, we changed the main module to instantiate our module and set a color according to the grid coordinate of the current pixel.
 
-module VGACOORD_2_GRIDCOORD(
-  vga_pixel_x,  
-  vga_pixel_y,
-  grid_coord_x,
-  grid_coord_y
-  );  //Specify all inputs and outputs to the module
-
-  input  [9:0] vga_pixel_x;   //Specify the direction and number of bits in the signal
-  input  [9:0] vga_pixel_y;
-  output reg [1:0] grid_coord_x;
-  output reg [1:0] grid_coord_y;
-  
-  always @ (*) begin          //begin combinatorial logic to determine which block the pixel is in
-    if (vga_pixel_x < `BLOCK_SIZE && vga_pixel_y < `BLOCK_SIZE) begin               //Upper left block
-      grid_coord_x = 0;
-      grid_coord_y = 0;
-    end
-    else if (vga_pixel_x < `BLOCK_SIZE && vga_pixel_y < `BLOCK_SIZE * 2) begin      //Lower left block
-      grid_coord_x = 0;
-      grid_coord_y = 1;
-    end
-    else if (vga_pixel_x < `BLOCK_SIZE * 2 && vga_pixel_y < `BLOCK_SIZE) begin      //Uper right block
-      grid_coord_x = 1;
-      grid_coord_y = 0;
-    end
-    else if (vga_pixel_x < `BLOCK_SIZE * 2 && vga_pixel_y < `BLOCK_SIZE * 2) begin  //Lower right block
-      grid_coord_x = 1;
-      grid_coord_y = 1;
-    end
-    else begin                                                                      //Not in the grid
-      grid_coord_x = 2;                                               
-      grid_coord_y = 2; 
-    end
-  end
-\
-endmodule
-```
-
-Now we change the main module to instantiate our module and set a color according to the grid coordinate of the current pixel.
-
-```verilog
-
-VGACOORD_2_GRIDCOORD vgacoord_2_gridcoord(    //Instantiate module
-  .vga_pixel_x(PIXEL_COORD_X),                //The text after the periods refers to internal wires in the module
-  .vga_pixel_y(PIXEL_COORD_Y),                //The text in the parantheses refers to wires external to the module
-  .grid_coord_x(grid_coord_x),
-  .grid_coord_y(grid_coord_y)
-  );
-
-//Always run:
-if (grid_coord_x < 2 && grid_coord_y < 2) begin                                   //If within grid
-  if (grid_array[grid_coord_y][grid_coord_x] == 1) begin                          //If array reads 1, color square red
-    PIXEL_COLOR <= 8'b111_000_00;
-  end
-  else begin
-    PIXEL_COLOR <= 8'b111_111_11;
-  end
-  else begin
-    PIXEL_COLOR <= 9'b000_000_00;
-  end
-end
-```
 ![FPGA control of screen](images/FPGA_screen.png)
 
 #### Final screen driver
@@ -219,51 +119,11 @@ We were able to generate a tone using a simple square wave, but for more pleasan
 
 ![Sound circuit with 3-bit DAC](images/lab3_circuit.png)
 
-To generate the output for a triangle wave of 440Hz, we incremented and decremented an 8-bit counter (from 0 to 255) every 110 cycles. Using the same line of thinking as for the square wave, we knew that we wanted one cycle of our wave to go from 0 to 255 to 0 in 56818 25MHz clock cycles. From here, we reasoned that the counter must increment or decrement every 110 cycles in order to go from 0 to 255 to 0 in the desired number of clock cycles. Below is a picture of our generated triangle wave, as well as the state machine to increment the counter.
+To generate the output for a triangle wave of 440Hz, we incremented and decremented an 8-bit counter (from 0 to 255) every 110 cycles. Using the same line of thinking as for the square wave, we knew that we wanted one cycle of our wave to go from 0 to 255 to 0 in 56818 25MHz clock cycles. From here, we reasoned that the counter must increment or decrement every 110 cycles in order to go from 0 to 255 to 0 in the desired number of clock cycles. Below is a picture of our generated triangle wave.
 
 ![440Hz triangle wave](images/lab3_triangle440.png)
 
 [Play sound](./lab3_sound_files/Triangle440.wav)
-
-```verilog
-  reg  [7:0] tri_value;       // 8-bit wave-output counter        
-   reg [6:0] tri_incrementer; // another counter to determine when the wave-output counter should incrementer/decrement
-   reg       count_direction; // 0 for increment, 1 for decrement
-
-// Triangle wave generator state machine
-   always @ (posedge CLOCK_25) begin
-    if (reset) begin
-      tri_value <= 8'b0;
-      tri_incrementer <= 7'b0;
-      count_direction <= 1'b0;
-    end
-    
-    // Determine if counter should increment or decrement
-    if (tri_value == 0) begin
-      count_direction <= 1'b0;
-    end
-    else if (tri_value == 8'd255) begin
-      count_direction <= 1'b1;
-    end
-    else begin
-      count_direction <= count_direction;
-    end
-    
-    // Increment/decrement tri_value every 110 cycles
-    if (tri_incrementer == 7'd110) begin
-       if (count_direction == 1'b1) begin
-        tri_value <= tri_value - 1;
-       end
-       else begin
-        tri_value <= tri_value + 1;
-       end
-       tri_incrementer <= 0;
-    end
-    else begin
-      tri_incrementer <= tri_incrementer + 1;
-    end   
-   end // always @ (posedge CLOCK_25)
-```
 
 The easiest way to generate a sine wave in Verilog is to initialize a sine table in ROM and then iterate through these values to produced the frequency you desire. This technique is known as direct digital synthesis (DDS) - if you take ECE4760, you'll learn more about this from Bruce! Generating a table containing data points that form a sine wave by hand is painful, so we used Matlab to that for us. We then copied and pasted that generated table directly from a .txt file created by Matlab to a Verilog module. To create a Verilog module that Quartus can infer as a ROM block, we used a template provided by Quartus. Inferring a memory block like ROM means that when the HDL is synthesized on the FPGA, Quartus will know to use the chip's memory bits to create a standardized ROM architecture. 
 
@@ -323,36 +183,9 @@ After all of this experimentation, we finally decided that the sine wave produce
           tone_duration_counter <= tone_duration_counter + 1;
         end
       end //0th tone
-      else if (tone_number_counter == 1) begin
-        enable_sound <= 1;
-        sound_freq   <= 10'd330; // middle e
-        
-        // play tone for one second
-        if (tone_duration_counter == `ONE_SEC) begin
-          tone_duration_counter <= 0;
-          tone_number_counter   <= tone_number_counter + 1;
-        end
-        else begin
-          tone_duration_counter <= tone_duration_counter + 1;
-        end
-      end //1st tone
-      else if (tone_number_counter == 2) begin
-        enable_sound <= 1;
-        sound_freq   <= 10'd392; // middle g
-        
-        // play tone for one second
-        if (tone_duration_counter == `ONE_SEC) begin
-          tone_duration_counter <= 0;
-          tone_number_counter   <= tone_number_counter + 1;
-        end
-        else begin
-          tone_duration_counter <= tone_duration_counter + 1;
-        end
-      end //2nd tone
-      else begin
-        enable_sound <= 0;   // done playing tune, so disable sound 
-      end
-    end
+      ... 
+      // Play second and third tones here
+      ...
     else begin
       enable_sound <= 0;
       sound_freq <= 10'd440;
